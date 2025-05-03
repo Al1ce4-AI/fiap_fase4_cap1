@@ -1,0 +1,197 @@
+import logging
+
+from sqlalchemy import String, Enum, Float, Boolean, Integer
+
+from src.database.tipos_base.model import Model
+import streamlit as st
+
+
+
+class EditView:
+    """
+    EditView is a class that provides functionality to edit a dashboard.
+    It includes methods to load the dashboard, edit its properties, and save changes.
+    """
+
+    def __init__(self, model: type[Model], model_id: int|None=None, instance: Model|None=None):
+        self.model = model
+        self.model_id = model_id
+        self.instance = instance
+
+        if model_id is not None and instance is None:
+            self.instance = model.get_from_id(model_id)
+        elif instance is not None:
+            self.instance = instance
+            self.id = instance.id
+
+    def show_validation(self, show:bool=True):
+        """
+        Função para exibir ou ocultar o formulário de validação.
+        :param show: bool - Se True, exibe o formulário de validação.
+        :return:
+        """
+        if show:
+            st.session_state[f"{self.model.__name__}__error__"] = True
+        else:
+            st.session_state[f"{self.model.__name__}__error__"] = False
+
+    def can_show_validation(self) -> bool:
+        """
+        Função para verificar se o formulário de validação pode ser exibido.
+        :return: bool - Se True, o formulário de validação pode ser exibido.
+        """
+        return st.session_state.get(f"{self.model.__name__}__error__", False)
+
+    def get_cadastro_view(self):
+        """
+        Função para exibir o formulário de cadastro.
+        :return:
+        """
+        st.title(self.model.display_name())
+
+        # criar colunas
+        col1, col2 = st.columns([3, 1])
+
+        with col1:
+            data = self.get_fields()
+
+        with col2:
+            # Criar um novo registro
+            if st.button("Salvar"):
+                if self.model.is_valid(data):
+                    self.show_validation(False)
+                    self.save(data)
+                else:
+                    logging.warning(f"Dados inválidos para {self.model.display_name()}. Verifique os campos e tente novamente.")
+                    self.show_validation(True)
+                    st.rerun()
+
+
+    def save(self, data: dict):
+
+        try:
+            # Criar uma nova instância do modelo com os dados do formulário
+            new_instance = self.model.from_dict(data)
+
+            # Salvar a nova instância no banco de dados
+            new_instance.save()
+
+            st.success("Registro salvo com sucesso!")
+        except Exception as e:
+            logging.error(f"Erro ao salvar o registro: {e}")
+            st.error(f"Erro ao salvar o registro. Verifique os dados e tente novamente.\n{e}")
+            raise
+
+
+    def get_fields(self) -> dict:
+        """
+        Função para exibir os campos do formulário.
+        :return:
+        """
+
+        data = {}
+
+        for field in self.model.fields():
+            if field.name == 'id':
+                logging.debug('Campo id não editável, skipping...')
+                continue
+
+            # print(f"Nome: {field.name}")
+            # print(f"Tipo: {field.type}")
+            # print(f"Info: {field.info}")
+            # print(f"Nullable: {field.nullable}")
+            # print(f"Default: {field.default}")
+            # print(f"Doc: {field.doc}")
+            # print(f"Comment: {field.comment}")
+            # print(f"Primary Key: {field.primary_key}")
+            # print(f"Autoincrement: {field.autoincrement}")
+            # print(f"Unique: {field.unique}")
+            # print(f"Foreign Key: {field.foreign_keys}")
+            # print()
+
+            value = None if self.instance is None else getattr(self.instance, field.name)
+            new_value = None
+
+            if isinstance(field.type, Enum):
+
+                options = [item.value for item in field.type.enum_class]
+
+                index = options.index(value) if value in options else None
+
+                new_value = st.selectbox(
+                    index=index,
+                    options=options,
+                    format_func=lambda x: field.type.enum_class(x).name,
+                    label=self.model.get_field_display_name(field.name),
+                    help=field.comment,
+                    placeholder="Escolha uma opção",
+
+                )
+
+                data[field.name] = new_value
+
+            elif isinstance(field.type, Float):
+                # Exibir um campo de texto para editar o valor
+                new_value = st.number_input(
+                    value=value,
+                    label=self.model.get_field_display_name(field.name),
+                    help=field.comment,
+                    format="%.2f",
+                    step=0.01,
+                )
+
+                data[field.name] = new_value
+
+            elif isinstance(field.type, Integer):
+                # Exibir um campo de texto para editar o valor
+                new_value = st.number_input(
+                    value=value,
+                    label=self.model.get_field_display_name(field.name),
+                    help=field.comment,
+                    format="%d",
+                    step=1,
+                )
+
+                data[field.name] = new_value
+
+            elif isinstance(field.type, Boolean):
+
+                if field.nullable:
+                    options = ["Sim", "Não", "Indefinido"]
+                else:
+                    options = ["Sim", "Não"]
+
+                _valor = "Sim" if value else "Não" if value is not None else "Indefinido"
+
+                index = options.index(_valor) if _valor in options else None
+
+                new_value = st.selectbox(
+                    label=self.model.get_field_display_name(field.name),
+                    options=options,
+                    index=index,
+                    help=field.comment,
+                )
+
+                data[field.name] = True if new_value == "Sim" else False
+
+            elif isinstance(field.type, String):
+                # Exibir um campo de texto para editar o valor
+                new_value = st.text_input(
+                    value=value,
+                    label=self.model.get_field_display_name(field.name),
+                    help=field.comment,
+                    max_chars=field.type.length,
+                )
+
+                data[field.name] = new_value
+
+            else:
+                logging.warning(f"Tipo de campo não suportado: {field.type}")
+                st.warning(f"Tipo de campo não suportado: {field.type}")
+                raise NotImplementedError(f"Tipo de campo não suportado: {field.type}")
+
+            if self.can_show_validation() and self.model.validate_field(field.name, new_value):
+                st.warning(f"Valor inválido para o campo {self.model.get_field_display_name(field.name)}: {self.model.validate_field(field.name, new_value)}")
+
+        return data
+

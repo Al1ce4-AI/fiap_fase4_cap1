@@ -1,43 +1,40 @@
 import streamlit as st
 
-from src.dashboard.principal import principal
-from src.dashboard.table_view import TableView
+from src.dashboard.principal import get_principal_page
+from src.dashboard.generic.table_view import TableView
 from src.database.dynamic_import import import_models
+from src.dashboard.menu import menu
 
-def get_rotas() -> dict:
-    """
-    Função para importar dinamicamente os módulos e retornar um dicionário de rotas.
-    :return: dict - Um dicionário com o nome das rotas como chave e as funções como valor.
-    """
-    rotas = {
-        "Principal": principal,
-    }
 
-    # Importa todos os modelos
+def get_generic_pages() -> list:
+    """
+    Função para importar dinamicamente os módulos e retornar uma lista de páginas genéricas que fazem o CRUD.
+    """
+
+    rotas = []
+
     models = import_models()
 
-    # Adiciona cada modelo ao dicionário de rotas
+
     items = list(models.items())
     items.sort(key=lambda x: x[1].display_name())
     for model_name, model in items:
-        rotas[model.display_name()] = TableView(model).get_view
-
+        view = TableView(model)
+        rotas.extend(view.get_routes())
     return rotas
 
-rotas = get_rotas()
-
-#todo arrumar isso daqui
-def nav():
+def navigation():
     """
     Função para exibir a página principal do aplicativo.
     :return:
     """
-    menu_lateral = st.sidebar.selectbox(
-        "Selecione uma opção",
-        rotas.keys(),
-    )
 
-    print(menu_lateral)
+    current_page = st.navigation([
+        get_principal_page(),
+        *get_generic_pages()
+    ])
 
-    if menu_lateral in rotas:
-        rotas[menu_lateral]()
+    menu()
+
+    current_page.run()
+

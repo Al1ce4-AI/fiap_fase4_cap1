@@ -1,49 +1,53 @@
-from enum import Enum
-
 import streamlit as st
-
-from src.dashboard.edit_view import EditView
+from src.dashboard.generic.edit_view import EditView
 from src.database.tipos_base.model import Model
 
 
-#view que pega os dados do banco de dados e mostra em uma tabela, com a opção de criar um novo ou editar
-
-class TableState(Enum):
-    """
-    Enum para gerenciar o estado da tabela.
-    """
-    VIEW = 1
-    EDIT = 2
-
 class TableView:
+    """
+    View que exibe uma tabela de um modelo e permite a edição dos registros.
+    """
 
     def __init__(self, model: type[Model]):
         self.model = model
 
-    def get_view(self):
-        """
-        Função para exibir uma tabela com os dados do banco de dados.
-        :return:
-        """
-        if st.session_state.get(Model.display_name(), TableState.VIEW).value == TableState.VIEW.value:
-            self.table_view()
-        elif st.session_state.get(Model.display_name(), TableState.VIEW).value == TableState.EDIT.value:
-            self.edit_view()
-        else:
-            raise ValueError(f"Estado inválido para a tabela {st.session_state.get(Model.display_name())}.")
+    def get_table_page(self) -> st.Page:
+        return st.Page(
+                self.table_view,
+                title=self.model.display_name(),
+                url_path=self.model.__name__.lower()
+            )
+
+    def get_edit_page(self) -> st.Page:
+        return st.Page(
+                self.edit_view,
+                title=f"Editar {self.model.display_name()}",
+                # De acordo com a documentação do Streamlit, o url_path não pode ter /
+                url_path=f"{self.model.__name__.lower()}_edit"
+            )
+
+    def get_routes(self) -> list:
+
+        rotas = [
+            self.get_table_page(),
+            self.get_edit_page(),
+        ]
+
+        return rotas
+
 
     def table_view(self):
 
         st.title(self.model.display_name_plural())
 
         # criar colunas
-        col1, col2 = st.columns([3, 1])  # Tabela (col1) maior, botão "Novo" (col2) menor
+        col1, col2 = st.columns([5, 1])  # Tabela (col1) maior, botão "Novo" (col2) menor
 
         with col2:
             # Criar um novo registro
             if st.button("Novo"):
-                st.session_state[Model.display_name()] = TableState.EDIT
-                st.rerun()
+                st.switch_page(self.get_edit_page())
+                # st.rerun()
 
         with col1:
             # Mostrar tabela

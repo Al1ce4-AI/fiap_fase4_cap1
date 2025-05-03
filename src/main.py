@@ -17,7 +17,6 @@ def main():
     pd.options.display.max_columns = 99
     pd.options.display.width = 200
 
-
     while True:
 
         try:
