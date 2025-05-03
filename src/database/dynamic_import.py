@@ -27,13 +27,13 @@ def import_models() -> dict[str, type[Model]]:
             src_path = src_path[src_path.index('src'):]
             src_path = '.'.join(src_path)
             module_name = f"{src_path}.{file[:-3]}"
-            logging.debug(f"Importando módulo: {module_name}")
+            # logging.debug(f"Importando módulo: {module_name}")
 
             module = importlib.import_module(module_name)
 
             for name, obj in inspect.getmembers(module, inspect.isclass):
                 if issubclass(obj, Model) and obj is not Model:
-                    logging.debug(f"Encontrada classe modelo: {name}")
+                    # logging.debug(f"Encontrada classe modelo: {name}")
                     models[name] = obj
 
     return models

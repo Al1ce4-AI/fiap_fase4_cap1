@@ -5,9 +5,6 @@ import streamlit as st
 
 def setup():
 
-    print(f'Engine {st.session_state.get('engine')}')
-    print(f'Session {st.session_state.get('session')}')
-
     Database.init_from_session(st.session_state.get('engine'), st.session_state.get('session'))
 
     if not st.session_state.get('init_tables', False):

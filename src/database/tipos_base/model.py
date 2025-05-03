@@ -1,7 +1,6 @@
 import json
 from abc import abstractmethod
-
-from sqlalchemy import inspect, Column, String
+from sqlalchemy import inspect, Column, String, Enum
 from sqlalchemy.orm import DeclarativeBase
 import pandas as pd
 
@@ -153,10 +152,23 @@ class Model(DeclarativeBase):
         :param data: dict - Dicionário com os dados para criar a instância.
         :return: Model - Instância do modelo.
         """
+
         return cls(**data)
 
     def to_json(self, indent = 4):
         return  json.dumps(self.to_dict(), indent=indent)
+
+    def update_from_dict(self, data: dict):
+        """
+        Atualiza os atributos da instância com os dados fornecidos em um dicionário.
+        :param data: dict - Dados a serem usados para atualizar a instância.
+        :return: Model - Instância atualizada.
+        """
+        for key, value in data.items():
+            if key in self.field_names():
+                setattr(self, key, value)
+
+        return self
 
     def copy_with(self, **kwargs):
         """
@@ -225,6 +237,26 @@ class Model(DeclarativeBase):
         """
         with Database.get_session() as session:
             return pd.read_sql(session.query(cls).statement, session.bind)
+
+
+    @classmethod
+    def as_dataframe_display(cls):
+        """
+        Retorna os dados da tabela como um DataFrame com os nomes de exibição.
+        :return: DataFrame - Dados da tabela com os nomes de exibição.
+        """
+
+        dataframe = cls.as_dataframe()
+
+        colum_names = {}
+
+        for column in cls.fields():
+            colum_names[column.name] = cls.get_field_display_name(column.name)
+
+            if isinstance(column.type, Enum):
+                dataframe[column.name] = dataframe[column.name].apply(lambda x: str(column.type.enum_class(x)))
+
+        return dataframe.rename(columns=colum_names)
 
     @classmethod
     def all(cls) -> list['Model']:

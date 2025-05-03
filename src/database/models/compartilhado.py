@@ -4,8 +4,7 @@ from enum import StrEnum
 class TipoCultura(StrEnum):
     CANA_DE_ACUCAR = "cana"
 
-    @property
-    def name(self):
+    def __str__(self):
 
         if self.value == "cana":
             return "Cana-de-Açúcar"
@@ -16,8 +15,7 @@ class FormatoArea(StrEnum):
     RETANGULO = "retangulo"
     TRIANGULO = "triangulo"
 
-    @property
-    def name(self):
+    def __str__(self):
 
         if self.value == "retangulo":
             return "Retângulo"
@@ -34,11 +32,21 @@ class UnidadesInsumo(StrEnum):
     LITRO = "l"
     ML = "ml"
 
-
-    @property
-    def name(self):
+    def __str__(self):
 
         if self.value == "t":
             return "Tonelada"
 
-        return super().name.upper()
+        if self.value == "kg":
+            return "Quilo"
+
+        if self.value == "g":
+            return "Gramas"
+
+        if self.value == "l":
+            return "Litro"
+
+        if self.value == "ml":
+            return "Mililitro"
+
+        return super().name

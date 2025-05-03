@@ -5,8 +5,6 @@ from sqlalchemy import String, Enum, Float, Boolean, Integer
 from src.database.tipos_base.model import Model
 import streamlit as st
 
-
-
 class EditView:
     """
     EditView is a class that provides functionality to edit a dashboard.
@@ -47,6 +45,7 @@ class EditView:
         Função para exibir o formulário de cadastro.
         :return:
         """
+        print('get_cadastro_view')
         st.title(self.model.display_name())
 
         # criar colunas
@@ -71,12 +70,26 @@ class EditView:
 
         try:
             # Criar uma nova instância do modelo com os dados do formulário
-            new_instance = self.model.from_dict(data)
+
+            if self.instance is None:
+
+                new_instance = self.model.from_dict(data)
+            else:
+                new_instance = self.instance.update_from_dict(data)
 
             # Salvar a nova instância no banco de dados
             new_instance.save()
 
             st.success("Registro salvo com sucesso!")
+
+            if st.query_params.get('id') is not None:
+                st.query_params.pop('id')
+
+            if st.query_params.get('edit') is not None:
+                st.query_params.pop('edit')
+
+            st.rerun()
+
         except Exception as e:
             logging.error(f"Erro ao salvar o registro: {e}")
             st.error(f"Erro ao salvar o registro. Verifique os dados e tente novamente.\n{e}")
@@ -121,7 +134,7 @@ class EditView:
                 new_value = st.selectbox(
                     index=index,
                     options=options,
-                    format_func=lambda x: field.type.enum_class(x).name,
+                    format_func=lambda x: str(field.type.enum_class(x)),
                     label=self.model.get_field_display_name(field.name),
                     help=field.comment,
                     placeholder="Escolha uma opção",
