@@ -1,5 +1,6 @@
 import streamlit as st
 
+from src.dashboard.global_messages import get_global_messages
 from src.dashboard.principal import get_principal_page
 from src.dashboard.generic.table_view import TableView
 from src.database.dynamic_import import import_models
@@ -28,7 +29,7 @@ def navigation():
     Função para exibir a página principal do aplicativo.
     :return:
     """
-
+    get_global_messages()
     current_page = st.navigation([
         get_principal_page(),
         *get_generic_pages()

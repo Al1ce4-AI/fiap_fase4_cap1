@@ -2,8 +2,32 @@ import logging
 
 from sqlalchemy import String, Enum, Float, Boolean, Integer
 
+from src.dashboard.global_messages import add_global_message
 from src.database.tipos_base.model import Model
 import streamlit as st
+
+@st.dialog("Confirmar Exclusão")
+def comfirmar_exclusao(messagem: str):
+    """
+    Função para confirmar a exclusão de um registro.
+    :param messagem: str - Mensagem a ser exibida na confirmação.
+    :return: bool - True se o usuário confirmar a exclusão, False caso contrário.
+    """
+    st.write(messagem)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("Não"):
+            st.session_state['confirmar_exclusao'] = False
+            st.rerun()
+
+    with col2:
+        if st.button("Sim"):
+            st.session_state['confirmar_exclusao'] = True
+            st.rerun()
+
+
 
 class EditView:
     """
@@ -64,12 +88,43 @@ class EditView:
                     logging.warning(f"Dados inválidos para {self.model.display_name()}. Verifique os campos e tente novamente.")
                     self.show_validation(True)
                     st.rerun()
+            if self.model_id is not None:
+                # Excluir o registro atual
+                if st.button("Excluir") or st.session_state.get("confirmar_exclusao") is not None:
+
+                    if st.session_state.get("confirmar_exclusao") is None:
+                        comfirmar_exclusao(f"Você tem certeza que deseja excluir o registro {self.instance.id}?")
+
+                    elif st.session_state.get("confirmar_exclusao") == False:
+                        st.session_state["confirmar_exclusao"] = None
+
+                    elif st.session_state.get("confirmar_exclusao") == True:
+                        st.session_state["confirmar_exclusao"] = None
+                        self.instance.delete()
+                        add_global_message(f"Exclusão do registro {self.model_id} efetuada com sucesso")
+                        logging.info(f"Exclusão do registro {self.model_id} efetuada com sucesso")
+
+                        if st.query_params.get('id') is not None:
+                            st.query_params.pop('id')
+
+                        if st.query_params.get('edit') is not None:
+                            st.query_params.pop('edit')
+
+                        st.rerun()
+
+                    else:
+                        raise NotImplementedError("Erro ao excluir o registro")
+
 
 
     def save(self, data: dict):
+        '''
+        Função para salvar os dados do formulário no banco de dados.
+        :param data: dict - Dados do formulário.
+        :return:
+        '''
 
         try:
-            # Criar uma nova instância do modelo com os dados do formulário
 
             if self.instance is None:
 
@@ -80,7 +135,8 @@ class EditView:
             # Salvar a nova instância no banco de dados
             new_instance.save()
 
-            st.success("Registro salvo com sucesso!")
+            add_global_message("Registro salvo com sucesso!")
+            logging.info(f"Registro salvo com sucesso: {new_instance}")
 
             if st.query_params.get('id') is not None:
                 st.query_params.pop('id')
@@ -94,6 +150,19 @@ class EditView:
             logging.error(f"Erro ao salvar o registro: {e}")
             st.error(f"Erro ao salvar o registro. Verifique os dados e tente novamente.\n{e}")
             raise
+
+    def delete(self):
+        """
+        Função para excluir o registro atual.
+        :return:
+        """
+        if self.instance is not None:
+            self.instance.delete()
+            st.success(f"Registro {self.instance.id} excluído com sucesso!")
+            logging.info(f"Registro excluído com sucesso: {self.instance}")
+            st.rerun()
+        else:
+            st.warning("Nenhum registro selecionado para exclusão.")
 
 
     def get_fields(self) -> dict:
