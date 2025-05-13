@@ -1,10 +1,12 @@
 import logging
 
-from sqlalchemy import String, Enum, Float, Boolean, Integer
+from sqlalchemy import String, Enum, Float, Boolean, Integer, DateTime
 
 from src.dashboard.global_messages import add_global_message
+from src.database.dynamic_import import import_models, get_model_by_table_name
 from src.database.tipos_base.model import Model
 import streamlit as st
+from datetime import datetime
 
 @st.dialog("Confirmar Exclusão")
 def comfirmar_exclusao(messagem: str):
@@ -194,7 +196,40 @@ class EditView:
             value = None if self.instance is None else getattr(self.instance, field.name)
             new_value = None
 
-            if isinstance(field.type, Enum):
+
+            if bool(field.foreign_keys):
+                #pega todos os items da tabela relacionada e exibe um selectbox
+
+                # Obter o nome da tabela relacionada
+                table_name = list(field.foreign_keys)[0].column.table.name
+
+                # Importar dinamicamente o modelo relacionado
+                related_class = get_model_by_table_name(table_name)
+
+                # Buscar todos os registros da tabela relacionada
+                related_items = related_class.all()
+
+                # Criar opções para o selectbox
+                options = [(item.id, str(item)) for item in related_items]
+
+                # Obter o valor atual
+                current_value = value if value else None
+
+                # Exibir o selectbox
+                new_value = st.selectbox(
+                    label=self.model.get_field_display_name(field.name),
+                    options=options,
+                    format_func=lambda x: x[1],
+                    index=[opt[0] for opt in options].index(current_value) if current_value else None,
+                    help=field.comment,
+                )
+
+                if new_value is not None:
+                    data[field.name] = new_value[0]
+                else:
+                    data[field.name] = None
+
+            elif isinstance(field.type, Enum):
 
                 options = [item.value for item in field.type.enum_class]
 
@@ -266,6 +301,29 @@ class EditView:
                 )
 
                 data[field.name] = new_value
+
+            elif isinstance(field.type, DateTime):
+                # Exibir um campo de data/hora para editar o valor
+                date = st.date_input(
+                    label=f"{self.model.get_field_display_name(field.name)} - Data",
+                    format="DD/MM/YYYY",
+                    value=value,
+                    help=field.comment,
+                )
+
+                time = st.time_input(
+                    label=f"{self.model.get_field_display_name(field.name)} - Hora",
+                    value=value,
+                    help=field.comment,
+                )
+
+                if date is not None or time is not None:
+
+                    dateTimeValue = datetime.combine(date or datetime.now().date(), time or datetime.now().time())
+
+                    data[field.name] = dateTimeValue
+                else:
+                    data[field.name] = None
 
             else:
                 logging.warning(f"Tipo de campo não suportado: {field.type}")

@@ -51,6 +51,18 @@ def get_model_by_name(name:str) -> type[Model]:
     else:
         raise ValueError(f"Model '{name}' não encontrado.")
 
+def get_model_by_table_name(table_name:str) -> type[Model]:
+    """
+    Retorna uma instância do modelo baseado no nome da tabela.
+    :param table_name: Nome da tabela.
+    :return: Model - Instância do modelo.
+    """
+    models = import_models()
+    for model_class in models.values():
+        if model_class.__tablename__ == table_name:
+            return model_class
+    raise ValueError(f"Model com tabela '{table_name}' não encontrado.")
+
 if __name__ == "__main__":
     models = import_models()
     for name, model in models.items():
