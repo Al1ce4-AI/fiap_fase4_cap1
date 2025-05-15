@@ -14,7 +14,7 @@ class TableView:
     def get_table_page(self) -> st.Page:
         return st.Page(
                 self.manage_routes,
-                title=self.model.display_name(),
+                title=self.model.display_name_plural(),
                 url_path=self.model.__name__.lower()
             )
 

@@ -7,6 +7,14 @@ class Unidade(Model):
 
     __tablename__ = 'UNIDADE'
 
+    @classmethod
+    def display_name(cls) -> str:
+        return "Unidade de Medida"
+
+    @classmethod
+    def display_name_plural(cls) -> str:
+        return "Unidades de Medida"
+
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
         primary_key=True,

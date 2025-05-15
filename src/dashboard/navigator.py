@@ -1,6 +1,8 @@
 import streamlit as st
 
 from src.dashboard.global_messages import get_global_messages
+from src.dashboard.plots.views import grafico_umidade_view, grafico_estado_do_rele, grafico_ph, grafico_fosforo, \
+    grafico_potassio
 from src.dashboard.principal import get_principal_page
 from src.dashboard.generic.table_view import TableView
 from src.database.dynamic_import import import_models
@@ -32,7 +34,12 @@ def navigation():
     get_global_messages()
     current_page = st.navigation([
         get_principal_page(),
-        *get_generic_pages()
+        *get_generic_pages(),
+        grafico_umidade_view.get_page(),
+        grafico_estado_do_rele.get_page(),
+        grafico_ph.get_page(),
+        grafico_fosforo.get_page(),
+        grafico_potassio.get_page(),
     ])
 
     menu()

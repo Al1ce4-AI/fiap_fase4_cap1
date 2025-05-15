@@ -1,9 +1,35 @@
-from sqlalchemy import Sequence, String, Text, ForeignKey, Float, DateTime
+from enum import StrEnum
+from typing import List
+from sqlalchemy import Sequence, String, Text, ForeignKey, Float, DateTime, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database.models.fazenda import Plantio
 from src.database.models.unidade import Unidade
+from src.database.tipos_base.database import Database
 from src.database.tipos_base.model import Model
-from datetime import datetime
+from datetime import datetime, date, time, timedelta
+
+class TipoSensorEnum(StrEnum):
+    FOSFORO = "P"
+    POTASSIO = "K"
+    PH = "pH"
+    UMIDADE = "H"
+    RELE = "Rele"
+
+    def __str__(self):
+
+        if self.value == "P":
+            return "Fósforo"
+        if self.value == "K":
+            return "Potássio"
+        if self.value == "pH":
+            return "PH"
+        if self.value == "H":
+            return "Umidade"
+        if self.value == "Rele":
+            return "Estado do Relé"
+
+        return super().name
+
 
 class TipoSensor(Model):
     """Representa um tipo de sensor que pode ser utilizado em uma plantação."""
@@ -32,7 +58,17 @@ class TipoSensor(Model):
         info={
             'label': 'Nome'
         },
-        comment="Ex.: ESP32, Arduino, Raspberry Pi"
+        comment="Ex.: Fósforo, Potássio, pH, Umidade, Rele"
+    )
+
+    tipo: Mapped[TipoSensorEnum] = mapped_column(
+        Enum(TipoSensorEnum, length=15),
+        nullable=False,
+        unique=False,
+        info={
+            'label': 'Tipo'
+        },
+        comment="Tipo do sensor, Ex.: Fósforo, Potássio, pH, Umidade, Rele"
     )
 
     sensors: Mapped[list['Sensor']] = relationship('Sensor', back_populates='tipo_sensor')
@@ -66,6 +102,17 @@ class Sensor(Model):
     )
 
     tipo_sensor: Mapped[TipoSensor] = relationship('TipoSensor', back_populates='sensors')
+
+    plantio_id: Mapped[int] = mapped_column(
+        ForeignKey('PLANTIO.id'),
+        nullable=False,
+        info={
+            'label': 'Plantio'
+        },
+        comment="ID do plantio associado"
+    )
+
+    plantio: Mapped[Plantio] = relationship('Plantio', back_populates='sensores')
 
     nome: Mapped[str] = mapped_column(
         String(255),
@@ -133,6 +180,19 @@ class Sensor(Model):
     def __str__(self):
         return f"{self.id} - {self.nome}"
 
+    @classmethod
+    def filter_by_tiposensor(cls, tipo_sensor: TipoSensorEnum) -> List['Sensor']:
+        """Retorna o tipo de sensor correspondente ao enum."""
+        with Database.get_session() as session:
+            # pega os tipos de sensores de umidade
+            tipo_sensor = session.query(TipoSensor).filter(TipoSensor.tipo == tipo_sensor).all()
+            tipo_ids = [ts.id for ts in tipo_sensor]
+
+            sensores = session.query(Sensor).filter(Sensor.tipo_sensor_id.in_(tipo_ids)).all()
+
+            return sensores
+
+
 class LeituraSensor(Model):
     """Representa uma leitura de um sensor em um determinado momento."""
 
@@ -164,17 +224,6 @@ class LeituraSensor(Model):
 
     sensor: Mapped[Sensor] = relationship('Sensor', back_populates='leituras')
 
-    plantio_id: Mapped[int] = mapped_column(
-        ForeignKey('PLANTIO.id'),
-        nullable=False,
-        info={
-            'label': 'Plantio'
-        },
-        comment="ID do plantio associado"
-    )
-
-    plantio: Mapped[Plantio] = relationship('Plantio', back_populates='leituras_sensores')
-
     data_leitura: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
@@ -192,3 +241,14 @@ class LeituraSensor(Model):
         },
         comment="Valor da leitura do sensor"
     )
+
+    @classmethod
+    def get_leituras_for_sensor(cls, sensor_id: int, data_inicial: date, data_final: date):
+        with Database.get_session() as session:
+            leituras = session.query(LeituraSensor).filter(
+                LeituraSensor.sensor_id == sensor_id,
+                LeituraSensor.data_leitura >= datetime.combine(data_inicial, time(0, 0, 0)),
+                LeituraSensor.data_leitura <= datetime.combine(data_final, time(23, 59, 59, 999999))
+            ).all()
+
+            return leituras

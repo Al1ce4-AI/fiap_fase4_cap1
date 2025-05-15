@@ -160,7 +160,9 @@ class Plantio(Model):
     )
 
     irrigacoes = relationship('Irrigacao', back_populates='plantio')
-    leituras_sensores = relationship('LeituraSensor', back_populates='plantio')
+
+    sensores = relationship('Sensor', back_populates='plantio')
+
 
     def __str__(self):
         return f"{self.id} - {self.nome}"

@@ -1,5 +1,4 @@
 import logging
-
 from src.database.tipos_base.database import Database, DEFAULT_DSN
 import streamlit as st
 
