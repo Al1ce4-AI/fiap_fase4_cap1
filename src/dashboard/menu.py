@@ -1,5 +1,8 @@
 import streamlit as st
 from typing import List
+
+from src.dashboard.database.exportar import exportar_db_page
+from src.dashboard.database.importar import importar_db_page
 from src.dashboard.generic.table_view import TableView
 from src.dashboard.plots.views import grafico_umidade_view, grafico_estado_do_rele, grafico_ph, grafico_fosforo, \
     grafico_potassio
@@ -74,6 +77,16 @@ def plot_menu():
     st.sidebar.page_link(grafico_fosforo.get_page())
     st.sidebar.page_link(grafico_potassio.get_page())
 
+def export_import_menu():
+    """
+    Função para exibir o menu lateral do aplicativo.
+    Cria as páginas de exportação e importação do banco de dados.
+    """
+
+    st.sidebar.header("Exportar/Importar")
+    st.sidebar.page_link(exportar_db_page)
+    st.sidebar.page_link(importar_db_page)
+
 def menu():
     """
     Função para exibir o menu lateral do aplicativo.
@@ -84,4 +97,5 @@ def menu():
     st.sidebar.page_link(get_principal_page())
     crud_menu()
     plot_menu()
+    export_import_menu()
 

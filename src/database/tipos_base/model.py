@@ -1,9 +1,9 @@
 import json
 from abc import abstractmethod
-from sqlalchemy import inspect, Column, String, Enum
+from sqlalchemy import inspect, Column, String, Enum, Float, Boolean, Integer, DateTime
 from sqlalchemy.orm import DeclarativeBase
 import pandas as pd
-
+from typing import List
 from src.database.tipos_base.database import Database
 
 
@@ -143,7 +143,7 @@ class Model(DeclarativeBase):
         Converte a instância do modelo em um dicionário.
         :return: dict - Dicionário com os atributos da instância.
         """
-        return {column.name: getattr(self, column.name) for column in inspect(self).mapper.column_attrs}
+        return {column.key: getattr(self, column.key) for column in inspect(self).mapper.column_attrs}
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -186,8 +186,22 @@ class Model(DeclarativeBase):
         Cria ou atualiza a instância no banco de dados.
         :return: Model - Instância salva.
         """
+
         with Database.get_session() as session:
             session.add(self)
+            session.commit()
+            print(self.id)
+
+        return self
+
+    def merge(self) -> 'Model':
+        """
+        Cria ou atualiza a instância no banco de dados.
+        :return: Model - Instância salva.
+        """
+
+        with Database.get_session() as session:
+            session.merge(self)
             session.commit()
             print(self.id)
 
@@ -237,6 +251,50 @@ class Model(DeclarativeBase):
         """
         with Database.get_session() as session:
             return pd.read_sql(session.query(cls).statement, session.bind)
+
+    @classmethod
+    def from_dataframe(cls, data:pd.DataFrame) -> List['Model']:
+        """
+        Cria uma lista de instâncias do modelo a partir de um DataFrame.
+        :param data: DataFrame - Dados a serem convertidos.
+        :return: List[Model] - Lista de instâncias do modelo.
+        """
+        instances = []
+        for _, row in data.iterrows():
+            data = {}
+            row = row.where(pd.notnull(row), None)
+            data_raw = row.to_dict()
+
+            for field in cls.fields():
+
+                if isinstance(field.type, Enum):
+
+                    data[field.name] = None if data_raw.get(field.name) is None else field.type.enum_class(data_raw[field.name])
+
+                elif isinstance(field.type, Float):
+                    data[field.name] = data_raw.get(field.name)
+
+                elif isinstance(field.type, Integer):
+                    data[field.name] = data_raw.get(field.name)
+
+                elif isinstance(field.type, Boolean):
+                    data[field.name] = data_raw.get(field.name)
+
+                elif isinstance(field.type, String):
+                    data[field.name] = data_raw.get(field.name)
+
+                elif isinstance(field.type, DateTime):
+                    data[field.name] = None if data_raw.get(field.name) is None else pd.to_datetime(data_raw[field.name], errors='coerce')
+
+                else:
+                    data[field.name] = data_raw.get(field.name)
+
+            #converte na do pandas para None e cria a instancia
+
+            instance = cls(**data)
+            instances.append(instance)
+        return instances
+
 
 
     @classmethod
