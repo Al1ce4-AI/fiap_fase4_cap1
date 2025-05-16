@@ -2,9 +2,7 @@ import logging
 from src.database.login.iniciar_database import iniciar_database
 from src.database.tipos_base.database import Database
 from src.logger.config import configurar_logger
-# from src.menu.menu_principal import menu_principal
 import pandas as pd
-import traceback
 
 def main():
     configurar_logger()
