@@ -230,7 +230,8 @@ class Model(DeclarativeBase):
         :return: DataFrame - Dados da tabela.
         """
         with Database.get_session() as session:
-            return pd.read_sql(session.query(cls).statement, session.bind)
+            query = session.query(cls).order_by(cls.id)
+            return pd.read_sql(query.statement, session.bind)
 
     @classmethod
     def from_dataframe(cls, data:pd.DataFrame) -> List['Model']:
@@ -303,7 +304,8 @@ class Model(DeclarativeBase):
         :return: list[Model] - Lista de instâncias do modelo.
         """
         with Database.get_session() as session:
-            return session.query(cls).all()
+            #order by id
+            return session.query(cls).order_by(Model.id).all()
 
 
     @classmethod

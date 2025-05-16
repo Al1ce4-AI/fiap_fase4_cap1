@@ -2,6 +2,7 @@ import streamlit as st
 from src.database.models.sensor import LeituraSensor
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 def get_grafico_barras(leituras: list[LeituraSensor], title: str):
     """
@@ -23,7 +24,8 @@ def get_grafico_barras(leituras: list[LeituraSensor], title: str):
     ax.set_xlabel('Data')
     ax.set_ylabel('Valor')
     ax.set_title(title)
-    ax.xaxis.set_major_formatter(plt.FixedFormatter(df['data_leitura'].dt.strftime('%H:%M:%S %d/%m/%Y')))
+    date_format = mdates.DateFormatter('%H:%M %d/%m/%Y')
+    ax.xaxis.set_major_formatter(date_format)
     plt.xticks(rotation=45)
     st.pyplot(fig)
 

@@ -258,6 +258,6 @@ class LeituraSensor(Model):
                 LeituraSensor.sensor_id == sensor_id,
                 LeituraSensor.data_leitura >= datetime.combine(data_inicial, time(0, 0, 0)),
                 LeituraSensor.data_leitura <= datetime.combine(data_final, time(23, 59, 59, 999999))
-            ).all()
+            ).order_by(LeituraSensor.data_leitura).all()
 
             return leituras

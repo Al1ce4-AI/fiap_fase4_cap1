@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 def get_grafico_degrau(leituras, title: str):
     """
@@ -22,7 +23,8 @@ def get_grafico_degrau(leituras, title: str):
     ax.set_xlabel('Data')
     ax.set_ylabel('Estado')
     ax.set_title(title)
-    ax.xaxis.set_major_formatter(plt.FixedFormatter(df['data_leitura'].dt.strftime('%H:%M:%S %d/%m/%Y')))
+    date_format = mdates.DateFormatter('%H:%M %d/%m/%Y')
+    ax.xaxis.set_major_formatter(date_format)
     ax.set_yticks([0, 1])  # Define os valores do eixo Y
     ax.set_yticklabels(['Desligado', 'Ligado'])  # Define os rótulos do eixo Y
     plt.xticks(rotation=45)
