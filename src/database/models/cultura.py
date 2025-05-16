@@ -6,6 +6,8 @@ class Cultura(Model):
     """A cultura que será plantada em um campo."""
 
     __tablename__ = 'CULTURA'
+    __menu_group__ = "Fazenda"
+    __menu_order__ = 3
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),

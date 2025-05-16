@@ -10,30 +10,6 @@ from src.database.tipos_base.database import Database
 #https://docs.sqlalchemy.org/en/20/orm/quickstart.html
 class Model(DeclarativeBase):
 
-    @classmethod
-    def display_name(cls) -> str:
-        """
-        Retorna o nome da tabela.
-        :return: str - Nome da tabela.
-        """
-        return cls.__name__.title()
-
-    @classmethod
-    def display_name_plural(cls) -> str:
-        """
-        Retorna o nome da tabela no plural.
-        :return: str - Nome da tabela no plural.
-        """
-        return f"{cls.__name__.title()}s"
-
-    #Não funciona na oracledb, infelizmente
-    # id: Mapped[int] = mapped_column(
-    #     Sequence(f"{__tablename__}_seq_id"),
-    #     primary_key=True,
-    #     autoincrement=True,
-    #     nullable=False
-    # )
-
     @property
     @abstractmethod
     def id(self):
@@ -49,6 +25,10 @@ class Model(DeclarativeBase):
          )
         """
         raise NotImplementedError("O atributo 'id' deve ser definido na classe herdeira.")
+
+    __menu_order__ = 100000
+    __menu_group__: str or None = None
+    __database_import_order__ = 100000
 
     @classmethod
     def field_names(cls) -> list[str]:
@@ -325,3 +305,19 @@ class Model(DeclarativeBase):
         with Database.get_session() as session:
             return session.query(cls).all()
 
+
+    @classmethod
+    def display_name(cls) -> str:
+        """
+        Retorna o nome da tabela.
+        :return: str - Nome da tabela.
+        """
+        return cls.__name__.title()
+
+    @classmethod
+    def display_name_plural(cls) -> str:
+        """
+        Retorna o nome da tabela no plural.
+        :return: str - Nome da tabela no plural.
+        """
+        return f"{cls.__name__.title()}s"

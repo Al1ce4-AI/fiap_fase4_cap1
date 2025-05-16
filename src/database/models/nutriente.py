@@ -7,6 +7,8 @@ class Nutriente(Model):
     """Representa um nutriente que pode ser aplicado em uma cultura."""
 
     __tablename__ = 'NUTRIENTE'
+    __menu_group__ = "Fazenda"
+    __menu_order__ = 5
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
@@ -34,12 +36,26 @@ class Nutriente(Model):
         }
     )
 
-class AplicacaoNutriente:
+    aplicacoes_nutrientes = relationship('AplicacaoNutriente', back_populates='nutriente')
+
+    def __str__(self):
+        return f"{self.id} - {self.nome}"
+
+class AplicacaoNutriente(Model):
     """
     Representa a aplicação de um nutriente em um plantio.
     """
 
     __tablename__ = 'APLICACAO_NUTRIENTE'
+
+    @classmethod
+    def display_name(cls) -> str:
+        return "Aplicação de Nutriente"
+
+    @classmethod
+    def display_name_plural(cls) -> str:
+        return "Aplicações de Nutriente"
+
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),

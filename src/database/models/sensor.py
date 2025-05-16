@@ -35,6 +35,8 @@ class TipoSensor(Model):
     """Representa um tipo de sensor que pode ser utilizado em uma plantação."""
 
     __tablename__ = 'TIPO_SENSOR'
+    __menu_group__ = "Sensores"
+    __menu_order__ = 1
 
     @classmethod
     def display_name(cls) -> str:
@@ -80,6 +82,8 @@ class Sensor(Model):
     """Representa um sensor que pode ser utilizado em uma plantação."""
 
     __tablename__ = 'SENSOR'
+    __menu_group__ = "Sensores"
+    __menu_order__ = 2
 
     @classmethod
     def display_name_plural(cls) -> str:
@@ -197,6 +201,8 @@ class LeituraSensor(Model):
     """Representa uma leitura de um sensor em um determinado momento."""
 
     __tablename__ = 'LEITURA_SENSOR'
+    __menu_group__ = "Sensores"
+    __menu_order__ = 3
 
     @classmethod
     def display_name(cls) -> str:

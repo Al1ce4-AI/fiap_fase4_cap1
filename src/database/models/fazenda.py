@@ -8,6 +8,8 @@ class Propriedade(Model):
     """Se refere a uma propriedade rural."""
 
     __tablename__ = 'PROPRIEDADE'
+    __menu_group__ = 'Fazenda'
+    __menu_order__ = 1
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
@@ -41,6 +43,8 @@ class Campo(Model):
     """Se refere a um campo dentro de uma propriedade rural."""
 
     __tablename__ = 'CAMPO'
+    __menu_group__ = 'Fazenda'
+    __menu_order__ = 2
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
@@ -94,6 +98,8 @@ class Plantio(Model):
     """Se refere a um plantio que é realizado num campo."""
 
     __tablename__ = 'PLANTIO'
+    __menu_group__ = 'Fazenda'
+    __menu_order__ = 4
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
@@ -162,6 +168,7 @@ class Plantio(Model):
     irrigacoes = relationship('Irrigacao', back_populates='plantio')
 
     sensores = relationship('Sensor', back_populates='plantio')
+    aplicacoes_nutrientes = relationship('AplicacaoNutriente', back_populates='plantio')
 
 
     def __str__(self):
