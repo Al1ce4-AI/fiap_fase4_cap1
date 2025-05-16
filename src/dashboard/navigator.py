@@ -33,6 +33,9 @@ def navigation():
     Função para exibir a página principal do aplicativo.
     :return:
     """
+
+    st.logo("assets/logo-farmtech-solutions-horizontal.png", size='large')
+
     get_global_messages()
     current_page = st.navigation([
         get_principal_page(),
