@@ -179,19 +179,6 @@ class EditView:
                 logging.debug('Campo id não editável, skipping...')
                 continue
 
-            # print(f"Nome: {field.name}")
-            # print(f"Tipo: {field.type}")
-            # print(f"Info: {field.info}")
-            # print(f"Nullable: {field.nullable}")
-            # print(f"Default: {field.default}")
-            # print(f"Doc: {field.doc}")
-            # print(f"Comment: {field.comment}")
-            # print(f"Primary Key: {field.primary_key}")
-            # print(f"Autoincrement: {field.autoincrement}")
-            # print(f"Unique: {field.unique}")
-            # print(f"Foreign Key: {field.foreign_keys}")
-            # print()
-
             value = None if self.instance is None else getattr(self.instance, field.name)
             new_value = None
 
