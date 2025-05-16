@@ -305,7 +305,7 @@ class Model(DeclarativeBase):
         """
         with Database.get_session() as session:
             #order by id
-            return session.query(cls).order_by(Model.id).all()
+            return session.query(cls).order_by(cls.id).all()
 
 
     @classmethod

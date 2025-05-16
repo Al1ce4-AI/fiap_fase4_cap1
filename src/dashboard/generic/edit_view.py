@@ -71,7 +71,6 @@ class EditView:
         Função para exibir o formulário de cadastro.
         :return:
         """
-        print('get_cadastro_view')
         st.title(self.model.display_name())
 
         # criar colunas
