@@ -8,6 +8,7 @@ class Cultura(Model):
     __tablename__ = 'CULTURA'
     __menu_group__ = "Fazenda"
     __menu_order__ = 3
+    __database_import_order__ = 1
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),

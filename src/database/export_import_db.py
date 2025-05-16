@@ -59,12 +59,20 @@ def import_database_zip(zip_file: io.BytesIO) -> list[tuple[Model, List[Model]]]
 
     response = []
 
+    models = import_models()
+    models = list(map(lambda x: x[1], models.items()))
+    models.sort(key=lambda x: x.__database_import_order__)
+
     with zipfile.ZipFile(zip_file, "r") as zip_ref:
-        for file_name in zip_ref.namelist():
+        for model in models:
+            file_name = f"{model.__tablename__}.csv"
+            if file_name not in zip_ref.namelist():
+                response.append((model, model.from_dataframe(pd.DataFrame())))
+                continue
+
             with zip_ref.open(file_name) as file:
                 df = pd.read_csv(file)
-                model_class = get_model_by_table_name(file_name[:-4])
-                response.append((model_class, model_class.from_dataframe(df)))
+                response.append((model, model.from_dataframe(df)))
 
     return response
 

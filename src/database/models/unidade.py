@@ -6,6 +6,7 @@ class Unidade(Model):
     """Representa uma unidade de medida"""
 
     __tablename__ = 'UNIDADE'
+    __database_import_order__ = 1
 
     @classmethod
     def display_name(cls) -> str:

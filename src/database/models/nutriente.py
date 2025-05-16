@@ -9,6 +9,7 @@ class Nutriente(Model):
     __tablename__ = 'NUTRIENTE'
     __menu_group__ = "Fazenda"
     __menu_order__ = 5
+    __database_import_order__ = 1
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),

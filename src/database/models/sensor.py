@@ -37,6 +37,7 @@ class TipoSensor(Model):
     __tablename__ = 'TIPO_SENSOR'
     __menu_group__ = "Sensores"
     __menu_order__ = 1
+    __database_import_order__ = 10
 
     @classmethod
     def display_name(cls) -> str:
@@ -84,6 +85,7 @@ class Sensor(Model):
     __tablename__ = 'SENSOR'
     __menu_group__ = "Sensores"
     __menu_order__ = 2
+    __database_import_order__ = 11
 
     @classmethod
     def display_name_plural(cls) -> str:
@@ -203,6 +205,7 @@ class LeituraSensor(Model):
     __tablename__ = 'LEITURA_SENSOR'
     __menu_group__ = "Sensores"
     __menu_order__ = 3
+    __database_import_order__ = 12
 
     @classmethod
     def display_name(cls) -> str:

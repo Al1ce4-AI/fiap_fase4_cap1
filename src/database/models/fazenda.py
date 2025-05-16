@@ -10,6 +10,7 @@ class Propriedade(Model):
     __tablename__ = 'PROPRIEDADE'
     __menu_group__ = 'Fazenda'
     __menu_order__ = 1
+    __database_import_order__ = 1
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
@@ -45,6 +46,7 @@ class Campo(Model):
     __tablename__ = 'CAMPO'
     __menu_group__ = 'Fazenda'
     __menu_order__ = 2
+    __database_import_order__ = 2
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
@@ -100,6 +102,7 @@ class Plantio(Model):
     __tablename__ = 'PLANTIO'
     __menu_group__ = 'Fazenda'
     __menu_order__ = 4
+    __database_import_order__ = 3
 
     id: Mapped[int] = mapped_column(
         Sequence(f"{__tablename__}_seq_id"),
