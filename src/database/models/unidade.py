@@ -43,7 +43,7 @@ class Unidade(Model):
         comment="Multiplicador da unidade de medida, Ex.: 1000 para kg, 1 para g e 0.001 para mg"
     )
 
-    irrigacoes = relationship('Irrigacao', back_populates='unidade')
+    #irrigacoes = relationship('Irrigacao', back_populates='unidade')
     sensors = relationship('Sensor', back_populates='unidade')
 
     def __str__(self):

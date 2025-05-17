@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database.models.fazenda import Plantio
 from src.database.models.unidade import Unidade
+from src.database.models.sensor import Sensor
 from src.database.tipos_base.model import Model
 from datetime import datetime
 
@@ -26,27 +27,27 @@ class Irrigacao(Model):
         nullable=False
     )
 
-    plantio_id : Mapped[int] = mapped_column(
-        ForeignKey('PLANTIO.id'),
-        nullable=False,
-        info={
-            'label': 'Plantio'
-        },
-        comment="ID do plantio associado"
-    )
+    #plantio_id : Mapped[int] = mapped_column(
+    #    ForeignKey('PLANTIO.id'),
+    #    nullable=False,
+    #    info={
+    #        'label': 'Plantio'
+    #    },
+    #    comment="ID do plantio associado"
+    #)
 
-    plantio: Mapped[Plantio] = relationship('Plantio', back_populates='irrigacoes')
+    #plantio: Mapped[Plantio] = relationship('Plantio', back_populates='irrigacoes')
 
-    unidade_id: Mapped[int] = mapped_column(
-        ForeignKey('UNIDADE.id'),
-        nullable=True,
-        info={
-            'label': 'Unidade'
-        },
-        comment="ID da unidade associada"
-    )
+    #unidade_id: Mapped[int] = mapped_column(
+    #    ForeignKey('UNIDADE.id'),
+    #    nullable=True,
+    #    info={
+    #        'label': 'Unidade'
+    #    },
+    #    comment="ID da unidade associada"
+    #)
 
-    unidade: Mapped[Unidade] = relationship('Unidade', back_populates='irrigacoes')
+    #unidade: Mapped[Unidade] = relationship('Unidade', back_populates='irrigacoes')
 
     quantidade_total: Mapped[float] = mapped_column(
         Float,
@@ -58,20 +59,20 @@ class Irrigacao(Model):
         comment="Quantidade de irrigação aplicada"
     )
 
-    data_inicio : Mapped[datetime] = mapped_column(
-        DateTime,
-        nullable=False,
-        info={
-            'label': 'Data de Início'
-        },
-        comment="Data de início da irrigação"
-    )
+    #data_inicio : Mapped[datetime] = mapped_column(
+    #    DateTime,
+    #    nullable=False,
+    #    info={
+    #        'label': 'Data de Início'
+    #    },
+    #    comment="Data de início da irrigação"
+    #)
 
-    data_fim : Mapped[datetime] = mapped_column(
+    data_hora : Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
         info={
-            'label': 'Data de Fim'
+            'label': 'Data e Hora que o sensor foi ativado'
         },
         comment="Data de fim da irrigação"
     )
@@ -86,3 +87,13 @@ class Irrigacao(Model):
         comment="Observação sobre a irrigação"
     )
 
+    sensor_id : Mapped[int] = mapped_column(
+        #ForeignKey('SENSOR.id'),
+        nullable=False,
+        info={
+            'label': 'Sensor'
+        },
+        comment="ID do sensor associado"
+    )
+
+    #sensor: Mapped[Plantio] = relationship('Sensor', back_populates='irrigacoes')

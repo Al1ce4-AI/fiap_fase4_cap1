@@ -168,7 +168,7 @@ class Plantio(Model):
         }
     )
 
-    irrigacoes = relationship('Irrigacao', back_populates='plantio')
+    #irrigacoes = relationship('Irrigacao', back_populates='plantio')
 
     sensores = relationship('Sensor', back_populates='plantio')
     aplicacoes_nutrientes = relationship('AplicacaoNutriente', back_populates='plantio')

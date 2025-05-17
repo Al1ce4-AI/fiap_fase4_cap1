@@ -181,6 +181,7 @@ class Sensor(Model):
         comment="Longitude do sensor"
     )
 
+
     leituras: Mapped[list['LeituraSensor']] = relationship('LeituraSensor', back_populates='sensor')
 
     def __str__(self):
