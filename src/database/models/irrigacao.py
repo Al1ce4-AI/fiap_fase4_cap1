@@ -1,9 +1,10 @@
 from sqlalchemy import Sequence, String, Text, ForeignKey, Float, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from service.get_weather import obter_dados_clima
 from src.database.models.fazenda import Plantio
 from src.database.models.unidade import Unidade
-from src.database.models.sensor import Sensor
+from src.database.models.sensor import LeituraSensor, Sensor
 from src.database.tipos_base.model import Model
 from datetime import datetime
 
@@ -66,3 +67,36 @@ class Irrigacao(Model):
     )
 
     sensor: Mapped[Sensor] = relationship('Sensor', back_populates='irrigacoes')
+
+    @classmethod
+    def decidir_irrigacao(cls, plantio_id: int) -> tuple[bool, dict]:
+        """Lógica centralizada no modelo"""
+        from src.database.tipos_base.database import Database
+        with Database.get_session() as session:
+            plantio = session.query(Plantio).get(plantio_id)
+            sensores = {
+                'umidade': cls._get_ultima_leitura(session, plantio_id, 'H'),
+                'ph': cls._get_ultima_leitura(session, plantio_id, 'pH'),
+                'clima': obter_dados_clima(plantio.campo.propriedade.nome)
+            }
+
+            deve_irrigar = (
+                sensores['umidade'] < 30 and
+                not sensores['clima']['chuva'] and
+                5.5 <= sensores['ph'] <= 7.0
+            )
+            return deve_irrigar, sensores
+
+    @staticmethod
+    def _get_ultima_leitura(session, plantio_id: int, tipo_sensor: str) -> float:
+        """Método auxiliar para leituras de sensores"""
+        sensor = session.query(Sensor).join(Sensor.tipo_sensor).filter(
+            Sensor.plantio_id == plantio_id,
+            Sensor.tipo_sensor.tipo == tipo_sensor
+        ).first()
+        if sensor:
+            leitura = session.query(LeituraSensor).filter(
+                LeituraSensor.sensor_id == sensor.id
+            ).order_by(LeituraSensor.data_leitura.desc()).first()
+            return leitura.valor if leitura else 0.0
+        return 0.0
