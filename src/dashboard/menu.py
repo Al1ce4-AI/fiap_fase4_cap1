@@ -1,6 +1,6 @@
 import streamlit as st
 
-from dashboard.irrigacao.views import get_irrigacao_page
+from src.dashboard.irrigacao.views import get_irrigacao_page, irrigacao_page
 from src.dashboard.api_metereologica.views import previsao_do_tempo
 from src.dashboard.database.exportar import exportar_db_page
 from src.dashboard.database.importar import importar_db_page
@@ -58,6 +58,7 @@ def weather_menu():
 
     st.sidebar.header("Clima")
     st.sidebar.page_link(previsao_do_tempo.get_page())
+    st.sidebar.page_link(irrigacao_page)
 
 def export_import_menu():
     """
@@ -81,5 +82,4 @@ def menu():
     plot_menu()
     weather_menu()
     export_import_menu()
-    st.sidebar.page_link(get_irrigacao_page(), label="Irrigação", icon="💧")
 

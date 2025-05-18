@@ -11,11 +11,13 @@ def cached_login(username, password, dsn):
     :param dsn: DSN do banco de dados.
     :return:
     """
-    Database.init_oracledb(username, password, dsn)
-    logging.info("Conexão bem-sucedida ao banco de dados Oracle!")
-    st.session_state.logged_in = True
-    st.session_state.engine = Database.engine
-    st.session_state.session = Database.session
+
+    if not st.session_state.get('logged_in', False):
+        Database.init_oracledb(username, password, dsn)
+        logging.info("Conexão bem-sucedida ao banco de dados Oracle!")
+        st.session_state.logged_in = True
+        st.session_state.engine = Database.engine
+        st.session_state.session = Database.session
 
 
 def login_view():

@@ -122,9 +122,11 @@ void loop() {
   if (condicoesCriticas >= 2 && condicoesAPI == 0) {
     digitalWrite(RELAY_PIN, HIGH);  // Liga a bomba
     digitalWrite(LED_PIN, HIGH);    // Liga o LED indicativo
+    Serial.print("Estado do Rele: Ligado");
   } else {
     digitalWrite(RELAY_PIN, LOW);   // Desliga a bomba
     digitalWrite(LED_PIN, LOW);     // Desliga o LED
+    Serial.print("Estado do Rele: Desligado");
   }
 
   delay(1000);  // Espera 1 segundo antes da próxima leitura

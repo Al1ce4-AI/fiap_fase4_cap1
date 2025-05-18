@@ -12,6 +12,8 @@ def main():
     Database.create_all_tables(drop_if_exists=False)
     ddl = Database.generate_ddl()
 
+    print(ddl)
+
     with open("export.ddl", "w") as f:
         f.write(ddl)
 
@@ -19,6 +21,8 @@ def main():
 
     with open("export.mer", "w") as f:
         f.write(mer)
+
+    print(mer)
 
     # leiturasPH = criar_dados_leitura(
     #     data_inicial=datetime(2025, 5, 15),

@@ -1,10 +1,10 @@
 from sqlalchemy import Sequence, String, Text, ForeignKey, Float, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from service.get_weather import obter_dados_clima
+from src.service.get_weather import obter_dados_clima
 from src.database.models.fazenda import Plantio
 from src.database.models.unidade import Unidade
-from src.database.models.sensor import LeituraSensor, Sensor
+from src.database.models.sensor import LeituraSensor, Sensor, TipoSensor
 from src.database.tipos_base.model import Model
 from datetime import datetime
 
@@ -77,12 +77,12 @@ class Irrigacao(Model):
             sensores = {
                 'umidade': cls._get_ultima_leitura(session, plantio_id, 'H'),
                 'ph': cls._get_ultima_leitura(session, plantio_id, 'pH'),
-                'clima': obter_dados_clima(plantio.campo.propriedade.nome)
+                'clima': obter_dados_clima("São Paulo")
             }
 
             deve_irrigar = (
                 sensores['umidade'] < 30 and
-                not sensores['clima']['chuva'] and
+                not sensores.get('clima', {}).get('chuva') and
                 5.5 <= sensores['ph'] <= 7.0
             )
             return deve_irrigar, sensores
@@ -90,10 +90,17 @@ class Irrigacao(Model):
     @staticmethod
     def _get_ultima_leitura(session, plantio_id: int, tipo_sensor: str) -> float:
         """Método auxiliar para leituras de sensores"""
+
+        tipo_sensor_instance = session.query(TipoSensor).filter(
+            TipoSensor.tipo == tipo_sensor
+        ).first()
+
+
         sensor = session.query(Sensor).join(Sensor.tipo_sensor).filter(
             Sensor.plantio_id == plantio_id,
-            Sensor.tipo_sensor.tipo == tipo_sensor
+            Sensor.tipo_sensor_id == tipo_sensor_instance.id
         ).first()
+
         if sensor:
             leitura = session.query(LeituraSensor).filter(
                 LeituraSensor.sensor_id == sensor.id
