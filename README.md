@@ -377,6 +377,10 @@ Para realizar uma operação de exclusão, basta o usário selecionar um dos mod
   <img src="assets/dashboard/delete/registro_excluido.PNG" alt="atualização" border="0" width=80% height=80%>
 </p>
 
+### Importar Tabela com dados
+
+TODO
+
 ### Ir Além 1: Dashboard em Python para Visualização dos Dados
 
 TODO
