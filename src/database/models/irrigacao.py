@@ -69,7 +69,7 @@ class Irrigacao(Model):
     sensor: Mapped[Sensor] = relationship('Sensor', back_populates='irrigacoes')
 
     @classmethod
-    def decidir_irrigacao(cls, plantio_id: int) -> tuple[bool, dict]:
+    def decidir_irrigacao(cls, plantio_id: int, cidade: str) -> tuple[bool, dict]:
         """Lógica centralizada no modelo"""
         from src.database.tipos_base.database import Database
         with Database.get_session() as session:
@@ -77,7 +77,7 @@ class Irrigacao(Model):
             sensores = {
                 'umidade': cls._get_ultima_leitura(session, plantio_id, 'H'),
                 'ph': cls._get_ultima_leitura(session, plantio_id, 'pH'),
-                'clima': obter_dados_clima("São Paulo")
+                'clima': obter_dados_clima(cidade)
             }
 
             deve_irrigar = (
