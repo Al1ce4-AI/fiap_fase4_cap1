@@ -326,7 +326,7 @@ O sistema foi desenvolvido em Python e utiliza um banco de dados Oracle para arm
 Para realizar uma operação de leitura, basta o usário selecionar um dos modelos disponíveis no menu principal. O sistema irá exibir os dados cadastrados na tabela selecionada.
 
 <p align="center">
-  <img src="assets/dashboard/read.PNG" alt="leitura" border="0" width=40% height=40%>
+  <img src="assets/dashboard/read.PNG" alt="leitura" border="0" width=80% height=80%>
 </p>
 
 ## Criação de dados (CREATE)
@@ -335,15 +335,15 @@ O sistema irá exibir um formulário para o usuário preencher os dados necessá
 O sistema irá validar os dados e realizar a operação no banco de dados.
 
 <p align="center">
-  <img src="assets/dashboard/create/botao_novo.PNG" alt="criação" border="0" width=40% height=40%>
+  <img src="assets/dashboard/create/botao_novo.PNG" alt="criação" border="0" width=80% height=80%>
 </p>
 
 <p align="center">
-  <img src="assets/dashboard/create/botao_salvar.PNG" alt="criação" border="0" width=40% height=40%>
+  <img src="assets/dashboard/create/botao_salvar.PNG" alt="criação" border="0" width=80% height=80%>
 </p>
 
 <p align="center">
-  <img src="assets/dashboard/create/registro_salvo.PNG" alt="criação" border="0" width=40% height=40%>
+  <img src="assets/dashboard/create/registro_salvo.PNG" alt="criação" border="0" width=80% height=80%>
 </p>
 
 ## Atualização de dados (UPDATE)
@@ -351,30 +351,30 @@ Para realizar uma operação de atualização, basta o usário selecionar um dos
 O sistema irá exibir um formulário com os dados cadastrados. O usuário pode alterar os dados e clicar no botão "Salvar" para atualizar o registro no banco de dados.
 
 <p align="center">
-  <img src="assets/dashboard/update/botao_editar.PNG" alt="atualização" border="0" width=40% height=40%>
+  <img src="assets/dashboard/update/botao_editar.PNG" alt="atualização" border="0" width=80% height=80%>
 <p>
 
 <p align="center">
-  <img src="assets/dashboard/update/botao_salvar_editar.PNG" alt="atualização" border="0" width=40% height=40%>
+  <img src="assets/dashboard/update/botao_salvar_editar.PNG" alt="atualização" border="0" width=80% height=80%>
 <p>
 
 <p align="center">
-  <img src="assets/dashboard/update/registro_atualizado.PNG" alt="atualização" border="0" width=40% height=40%>
+  <img src="assets/dashboard/update/registro_atualizado.PNG" alt="atualização" border="0" width=80% height=80%>
 </p>
 
 ## Exclusão de dados (DELETE)
 Para realizar uma operação de exclusão, basta o usário selecionar um dos modelos disponíveis no menu principal, selecionar uma das linhas e clicar no botão "Editar" e posteriormente "Excluir".
 
 <p align="center">
-  <img src="assets/dashboard/delete/botao_editar.PNG" alt="atualização" border="0" width=40% height=40%>
+  <img src="assets/dashboard/delete/botao_editar.PNG" alt="atualização" border="0" width=80% height=80%>
 <p>
 
 <p align="center">
-  <img src="assets/dashboard/delete/botao_excluir.PNG" alt="atualização" border="0" width=40% height=40%>
+  <img src="assets/dashboard/delete/botao_excluir.PNG" alt="atualização" border="0" width=80% height=80%>
 <p>
 
 <p align="center">
-  <img src="assets/dashboard/delete/registro_excluido.PNG" alt="atualização" border="0" width=40% height=40%>
+  <img src="assets/dashboard/delete/registro_excluido.PNG" alt="atualização" border="0" width=80% height=80%>
 </p>
 
 ### Ir Além 1: Dashboard em Python para Visualização dos Dados
