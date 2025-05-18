@@ -5,6 +5,7 @@ from src.dashboard.plots.generic.grafico_degrau import get_grafico_degrau
 from src.dashboard.plots.generic.grafico_linha import get_grafico_linha
 from src.dashboard.plots.generic.utils import get_sensores_por_tipo, get_leituras_for_sensor
 from src.dashboard.plots.todas_leituras.plot_todas_leituras_linha import get_grafico_linha_todas_leituras
+from src.database.generator.criar_dados_leitura import criar_dados_litura_para_sensor
 from src.database.models.sensor import TipoSensorEnum, LeituraSensor, Sensor
 from datetime import datetime, timedelta
 
@@ -42,7 +43,77 @@ class PlotAllView:
         data_inicial = st.date_input("Data inicial", value=datetime.now(), format="DD/MM/YYYY")
         data_final = st.date_input("Data final", value=datetime.now() + timedelta(days=7), format="DD/MM/YYYY")
 
-        if None not in list(sensores_selecionados.values()) and data_inicial is not None and data_final is not None:
+        col1, col2 = st.columns(2)
+
+        simulacao = None
+        real = None
+
+        with col1:
+            simulacao = st.button("Gerar Simulação")
+
+        with col2:
+            real = st.button("Gerar Gráfico")
+
+        if (simulacao or real) and (
+                None in list(sensores_selecionados.values()) or data_inicial is None or data_final is None
+        ):
+            st.warning("Selecione um sensor e as datas para gerar o gráfico.")
+
+        elif simulacao:
+
+
+            sensor_umidade = sensores_selecionados[TipoSensorEnum.UMIDADE.value]
+            sensor_rele = sensores_selecionados[TipoSensorEnum.RELE.value]
+            sensor_ph = sensores_selecionados[TipoSensorEnum.PH.value]
+            sensor_fosforo = sensores_selecionados[TipoSensorEnum.FOSFORO.value]
+            sensor_potassio = sensores_selecionados[TipoSensorEnum.POTASSIO.value]
+
+            leituras_umidade = criar_dados_litura_para_sensor(
+                data_inicial=data_inicial,
+                data_final=data_final,
+                sensor_id=sensor_umidade.id,
+                total_leituras=20,
+                tipo_sensor=TipoSensorEnum.UMIDADE
+            )
+            leituras_rele = criar_dados_litura_para_sensor(
+                data_inicial=data_inicial,
+                data_final=data_final,
+                sensor_id=sensor_rele.id,
+                total_leituras=20,
+                tipo_sensor=TipoSensorEnum.RELE
+            )
+            leituras_ph = criar_dados_litura_para_sensor(
+                data_inicial=data_inicial,
+                data_final=data_final,
+                sensor_id=sensor_ph.id,
+                total_leituras=20,
+                tipo_sensor=TipoSensorEnum.PH
+            )
+            leituras_fosforo = criar_dados_litura_para_sensor(
+                data_inicial=data_inicial,
+                data_final=data_final,
+                sensor_id=sensor_fosforo.id,
+                total_leituras=20,
+                tipo_sensor=TipoSensorEnum.FOSFORO
+            )
+            leituras_potassio = criar_dados_litura_para_sensor(
+                data_inicial=data_inicial,
+                data_final=data_final,
+                sensor_id=sensor_potassio.id,
+                total_leituras=20,
+                tipo_sensor=TipoSensorEnum.POTASSIO
+            )
+
+            get_grafico_linha_todas_leituras(
+                leituras_umidade,
+                leituras_rele,
+                leituras_ph,
+                leituras_fosforo,
+                leituras_potassio,
+                f"Gráfico de todas as leituras entre {data_inicial} e {data_final}"
+            )
+
+        elif real:
 
             sensor_umidade = sensores_selecionados[TipoSensorEnum.UMIDADE.value]
             sensor_rele = sensores_selecionados[TipoSensorEnum.RELE.value]
@@ -68,9 +139,6 @@ class PlotAllView:
                     f"Gráfico de todas as leituras entre {data_inicial} e {data_final}"
                 )
 
-
-        else:
-            st.warning("Selecione os sensores e as datas para gerar o gráfico.")
 
     def get_page(self) -> st.Page:
         """

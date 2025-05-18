@@ -1,7 +1,7 @@
 from datetime import datetime
 from random import randrange, choice
 from typing import Literal, Optional
-from src.database.models.sensor import LeituraSensor
+from src.database.models.sensor import LeituraSensor, TipoSensorEnum
 
 
 def criar_dados_leitura(
@@ -51,3 +51,72 @@ def criar_dados_leitura(
         ))
 
     return leituras
+
+
+def criar_dados_litura_para_sensor(
+        data_inicial: datetime,
+        data_final: datetime,
+        sensor_id: int,
+        total_leituras: int,
+        tipo_sensor: TipoSensorEnum,
+) -> list[LeituraSensor]:
+    """
+    Cria dados de leitura para um sensor específico em um intervalo de datas.
+    Args:
+        data_inicial (datetime): Data inicial do intervalo.
+        data_final (datetime): Data final do intervalo.
+        sensor_id (int): ID do sensor.
+        total_leituras (int): Total de leituras a serem geradas.
+        tipo_sensor (TipoSensorEnum): Tipo de sensor.
+
+    Returns:
+        list: Lista de dicionários com os dados de leitura gerados.
+    """
+
+    if tipo_sensor == TipoSensorEnum.FOSFORO:
+        return criar_dados_leitura(
+            data_inicial=data_inicial,
+            data_final=data_final,
+            sensor_id=sensor_id,
+            total_leituras=total_leituras,
+            tipo='bool'
+        )
+    elif tipo_sensor == TipoSensorEnum.POTASSIO:
+        return criar_dados_leitura(
+            data_inicial=data_inicial,
+            data_final=data_final,
+            sensor_id=sensor_id,
+            total_leituras=total_leituras,
+            tipo='bool'
+        )
+
+    elif tipo_sensor == TipoSensorEnum.PH:
+        return criar_dados_leitura(
+            data_inicial=data_inicial,
+            data_final=data_final,
+            sensor_id=sensor_id,
+            total_leituras=total_leituras,
+            tipo='range',
+            minimo=0,
+            maximo=14
+        )
+    elif tipo_sensor == TipoSensorEnum.UMIDADE:
+        return criar_dados_leitura(
+            data_inicial=data_inicial,
+            data_final=data_final,
+            sensor_id=sensor_id,
+            total_leituras=total_leituras,
+            tipo='range',
+            minimo=0,
+            maximo=100
+        )
+    elif tipo_sensor == TipoSensorEnum.RELE:
+        return criar_dados_leitura(
+            data_inicial=data_inicial,
+            data_final=data_final,
+            sensor_id=sensor_id,
+            total_leituras=total_leituras,
+            tipo='bool'
+        )
+    else:
+        raise ValueError("Tipo de sensor inválido.")
