@@ -23,11 +23,13 @@ class PlotView:
                     url_path: str,
                     tipo_sensor: TipoSensorEnum,
                     tipo_grafico: TipoGraficoEnum = TipoGraficoEnum.BARRAS,
+                    labels: list = None,
                  ):
         self.title = title
         self.url_path = url_path
         self.tipo_sensor = tipo_sensor
         self.tipo_grafico = tipo_grafico
+        self.labels = labels
 
     def view(self):
         """
@@ -72,7 +74,7 @@ class PlotView:
         elif self.tipo_grafico == TipoGraficoEnum.LINHA:
             get_grafico_linha(leituras, f"Gráfico de {self.tipo_sensor} do sensor {sensor_selecionado.nome}")
         elif self.tipo_grafico == TipoGraficoEnum.DEGRAU:
-            get_grafico_degrau(leituras, f"Gráfico de {self.tipo_sensor} do sensor {sensor_selecionado.nome}")
+            get_grafico_degrau(leituras, f"Gráfico de {self.tipo_sensor} do sensor {sensor_selecionado.nome}", labels=self.labels)
 
 
     def get_page(self) -> st.Page:

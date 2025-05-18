@@ -23,10 +23,14 @@ grafico_fosforo = PlotView(
     title="Gráfico de Fósforo",
     url_path="/graficofosforo",
     tipo_sensor=TipoSensorEnum.FOSFORO,
+    tipo_grafico=TipoGraficoEnum.DEGRAU,
+    labels=['Ausente', 'Presente']
 )
 
 grafico_potassio = PlotView(
     title="Gráfico de Potássio",
     url_path="/graficopotassio",
     tipo_sensor=TipoSensorEnum.POTASSIO,
+    tipo_grafico=TipoGraficoEnum.DEGRAU,
+    labels=['Ausente', 'Presente']
 )
