@@ -433,6 +433,28 @@ Conforme solicitado no enunciado, o dashboard permite realizar atualizações de
 Para atualizar a leitura de um sensor, o usario deverá selecionar a opção "Leituras de Sensores" no menu principal. Em seguida, o usuário pode clicar no botão "Editar" para modificar os dados de uma leitura específica. 
 Após realizar as alterações, o usuário deve clicar no botão "Salvar" para atualizar o registro no banco de dados, conforme mencionado nas operações CRUD.
 
+<p align="center">
+  <img src="assets/dashboard/atualizacao_leitura.PNG" alt="atualização_leitura" border="0" width=80% height=80%>
+</p>
+
+## Visualização de gráficos reais ou simulados
+
+O dashboard também inclui gráficos que representam os dados coletados pelos sensores. Esses gráficos podem ser gerados a partir de dados reais ou simulados, dependendo da opção selecionada.
+
+Para visualizar os gráficos o usuário deve selecionar uma das opções de "Gráficos" no menu principal. 
+A seguir, o usario deverá selecionar o sensor ou sensores desejados, data inicial e data final.
+Posteriormente, o usuário deve clicar no botão "Gerar Simulação" para visualizar dados simulados ou "Gerar Gráfico" para visualizar dados reais.
+
+<p align="center">
+  <img src="assets/dashboard/grafico1.PNG" alt="graficos" border="0" width=80% height=80%>
+</p>
+<p align="center">
+  <img src="assets/dashboard/grafico2.PNG" alt="graficos" border="0" width=80% height=80%>
+</p>
+
+
+### Ir Além 2: Integração Python com API Pública
+
 ## Funcionamento API
 
 #  1. Objetivo
@@ -484,31 +506,6 @@ Dados criptografados em trânsito
   401: Chave inválida
   404: Cidade não encontrada
   429: Limite excedido
-
-
-<p align="center">
-  <img src="assets/dashboard/atualizacao_leitura.PNG" alt="atualização_leitura" border="0" width=80% height=80%>
-</p>
-
-## Visualização de gráficos reais ou simulados
-
-O dashboard também inclui gráficos que representam os dados coletados pelos sensores. Esses gráficos podem ser gerados a partir de dados reais ou simulados, dependendo da opção selecionada.
-
-Para visualizar os gráficos o usuário deve selecionar uma das opções de "Gráficos" no menu principal. 
-A seguir, o usario deverá selecionar o sensor ou sensores desejados, data inicial e data final.
-Posteriormente, o usuário deve clicar no botão "Gerar Simulação" para visualizar dados simulados ou "Gerar Gráfico" para visualizar dados reais.
-
-<p align="center">
-  <img src="assets/dashboard/grafico1.PNG" alt="graficos" border="0" width=80% height=80%>
-</p>
-<p align="center">
-  <img src="assets/dashboard/grafico2.PNG" alt="graficos" border="0" width=80% height=80%>
-</p>
-
-
-### Ir Além 2: Integração Python com API Pública
-
-TODO
 
 ## 📁 Estrutura de pastas
 
