@@ -10,8 +10,8 @@ def criar_dados_leitura(
         sensor_id:int,
         total_leituras:int,
         tipo:Literal['bool', 'range'],
-        minimo:Optional[float],
-        maximo:Optional[float]
+        minimo:Optional[float]=None,
+        maximo:Optional[float]=None
 ) -> list[LeituraSensor]:
     """
     Cria dados de leitura um sensor específico em um intervalo de datas.

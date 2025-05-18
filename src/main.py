@@ -12,14 +12,13 @@ def main():
     Database.create_all_tables(drop_if_exists=False)
     ddl = Database.generate_ddl()
 
-    # with open("export.ddl", "w") as f:
-    #     f.write(ddl)
-    #
-    # mer = Database.generate_mer()
-    #
-    # with open("export.mer", "w") as f:
-    #     f.write(mer)
+    with open("export.ddl", "w") as f:
+        f.write(ddl)
 
+    mer = Database.generate_mer()
+
+    with open("export.mer", "w") as f:
+        f.write(mer)
 
     # leiturasPH = criar_dados_leitura(
     #     data_inicial=datetime(2025, 5, 15),
@@ -34,7 +33,7 @@ def main():
     # for (i, leitura) in enumerate(leiturasPH):
     #     print(f"Leitura {i}: {leitura.data_leitura} - {leitura.valor}")
     #     leitura.save()
-
+    #
     # leiturasPotassio = criar_dados_leitura(
     #     data_inicial=datetime(2025, 5, 15),
     #     data_final=datetime(2025, 5, 21),
@@ -43,12 +42,20 @@ def main():
     #     tipo='bool',
     # )
     #
+    # for (i, leitura) in enumerate(leiturasPotassio):
+    #     print(f"Leitura {i}: {leitura.data_leitura} - {leitura.valor}")
+    #     leitura.save()
+    #
     # leiturasFosforo = criar_dados_leitura(
     #     data_inicial=datetime(2025, 5, 15),
     #     data_final=datetime(2025, 5, 21),
-    #     sensor_id=2,
+    #     sensor_id=4,
     #     total_leituras=20,
     #     tipo='bool',
     # )
+    #
+    # for (i, leitura) in enumerate(leiturasFosforo):
+    #     print(f"Leitura {i}: {leitura.data_leitura} - {leitura.valor}")
+    #     leitura.save()
 
 main()
