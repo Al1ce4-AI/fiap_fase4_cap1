@@ -12,7 +12,7 @@ class Nutriente(Model):
     __database_import_order__ = 1
 
     id: Mapped[int] = mapped_column(
-        Sequence(f"{__tablename__}_seq_id"),
+        Sequence(f"{__tablename__}_SEQ_ID"),
         primary_key=True,
         autoincrement=True,
         nullable=False
@@ -59,7 +59,7 @@ class AplicacaoNutriente(Model):
 
 
     id: Mapped[int] = mapped_column(
-        Sequence(f"{__tablename__}_seq_id"),
+        Sequence(f"{__tablename__}_SEQ_ID"),
         primary_key=True,
         autoincrement=True,
         nullable=False

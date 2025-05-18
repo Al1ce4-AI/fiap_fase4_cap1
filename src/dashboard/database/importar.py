@@ -1,8 +1,10 @@
 import streamlit as st
 from sqlalchemy.exc import DatabaseError, IntegrityError
-
 from src.database.export_import_db import import_database_zip
 import pandas as pd
+
+from src.database.reset_contador_ids import reset_contador_ids
+
 
 def importar_database():
 
@@ -44,6 +46,10 @@ def importar_database():
                             else:
                                 print(e.code)
                                 raise
+
+                # Atualiza o contador de IDs
+                reset_contador_ids()
+
 
             st.success("Banco de dados atualizado com sucesso!")
 

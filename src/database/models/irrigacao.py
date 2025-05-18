@@ -21,7 +21,7 @@ class Irrigacao(Model):
         return "Irrigações"
 
     id: Mapped[int] = mapped_column(
-        Sequence(f"{__tablename__}_seq_id"),
+        Sequence(f"{__tablename__}_SEQ_ID"),
         primary_key=True,
         autoincrement=True,
         nullable=False

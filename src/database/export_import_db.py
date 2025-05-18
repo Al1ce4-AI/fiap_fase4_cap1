@@ -5,6 +5,8 @@ import zipfile
 import pandas as pd
 from src.database.tipos_base.model import Model
 from typing import List
+from src.database.tipos_base.database import Database
+from sqlalchemy import text
 
 
 def convert_database_to_dataframes() -> list[tuple[Model, pd.DataFrame]]:
@@ -54,7 +56,9 @@ def create_database_zip_export() -> io.BytesIO:
 def import_database_zip(zip_file: io.BytesIO) -> list[tuple[Model, List[Model]]]:
     """
     Importa um arquivo zip contendo arquivos CSV para o banco de dados.
+    Atualiza o contador de ID após a importação.
     :param zip_file: Buffer do arquivo zip.
+    :param session: Sessão do SQLAlchemy.
     """
 
     response = []

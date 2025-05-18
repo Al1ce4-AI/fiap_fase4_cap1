@@ -48,7 +48,7 @@ class TipoSensor(Model):
         return "Tipos de Sensores"
 
     id: Mapped[int] = mapped_column(
-        Sequence(f"{__tablename__}_seq_id"),
+        Sequence(f"{__tablename__}_SEQ_ID"),
         primary_key=True,
         autoincrement=True,
         nullable=False
@@ -92,7 +92,7 @@ class Sensor(Model):
         return "Sensores"
 
     id: Mapped[int] = mapped_column(
-        Sequence(f"{__tablename__}_seq_id"),
+        Sequence(f"{__tablename__}_SEQ_ID"),
         primary_key=True,
         autoincrement=True,
         nullable=False
@@ -111,7 +111,7 @@ class Sensor(Model):
 
     plantio_id: Mapped[int] = mapped_column(
         ForeignKey('PLANTIO.id'),
-        nullable=False,
+        nullable=True,
         info={
             'label': 'Plantio'
         },
@@ -219,7 +219,7 @@ class LeituraSensor(Model):
         return "Leituras de Sensores"
 
     id: Mapped[int] = mapped_column(
-        Sequence(f"{__tablename__}_seq_id"),
+        Sequence(f"{__tablename__}_SEQ_ID"),
         primary_key=True,
         autoincrement=True,
         nullable=False

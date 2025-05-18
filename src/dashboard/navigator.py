@@ -34,7 +34,7 @@ def navigation():
     :return:
     """
 
-    st.logo("assets/logo-farmtech-solutions-horizontal.png", size='large')
+    st.logo("assets/logo/logo-farmtech-solutions-horizontal.png", size='large')
 
     get_global_messages()
     current_page = st.navigation([

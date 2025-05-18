@@ -5,7 +5,7 @@ def _principal():
     st.title("Saudações!")
 
     #mostrar logo
-    st.image("assets/logo-farmtech-solutions.png", width=600)
+    st.image("assets/logo/logo-farmtech-solutions.png", width=600)
 
 def get_principal_page() -> st.Page:
     """
