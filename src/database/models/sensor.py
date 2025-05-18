@@ -184,6 +184,8 @@ class Sensor(Model):
 
     leituras: Mapped[list['LeituraSensor']] = relationship('LeituraSensor', back_populates='sensor')
 
+    irrigacoes: Mapped[list['Irrigacao']] = relationship('Irrigacao', back_populates='sensor')
+
     def __str__(self):
         return f"{self.id} - {self.nome}"
 

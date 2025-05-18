@@ -7,9 +7,9 @@
 <br>
 
 
-# Projeto: fiap_fase2_cap6
+# Projeto: fiap_fase3_cap1-novo
 
-## Atividade em Grupo: FIAP - 1TIAOB - 2025/1 - Fase2 Cap6
+## Atividade em Grupo: FIAP - 1TIAOB - 2025/1 - Fase3 Cap1
 
 ## 👨‍🎓 Integrantes: 
 - <a href="">Alice C. M. Assis - RM 566233</a>
@@ -27,104 +27,365 @@
 
 ## 📜 Descrição
 
-Este projeto tem como objetivo desenvolver um mini sistema de gestão de agronegócio, voltado para atender às necessidades de controle e organização no setor. A aplicação permite que o usuário:
+Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligente com sensores de umidade, nutrientes e pH, capazes de acionar automaticamente a bomba de irrigação conforme os dados coletados. As informações são armazenadas em um banco de dados SQL, permitindo visualização e análises estatísticas dos resultados.
 
-- Cadastre fazendas, insumos e maquinários.
-- Controle os custos relacionados a insumos e combustível.
-- Obtenha rotas otimizadas para colheita na lavoura.
+## Objetivos do projeto:
 
-A solução utiliza conceitos de subalgoritmos, estruturas de dados (listas, tuplas, dicionários), manipulação de arquivos (texto e JSON) e conexão com banco de dados Oracle. O foco principal está na inovação, boa usabilidade e relevância para o setor do agronegócio, proporcionando uma ferramenta prática e eficiente para os usuários.
-
-## Conceitos vistos nas aulas utilizados neste projeto:
-
-- **Subalgoritmos**: O projeto utiliza funções e procedimentos com passagem de parâmetros para modularizar e organizar o código, promovendo reutilização e clareza. Exemplos podem ser observados em diversas partes do código, como:
-
-  - O procedimento `main()` no arquivo [main.py](src/main.py), que organiza o fluxo principal da aplicação.
-  - O procedimento `log()` no arquivo [loggers.py](src/logger/loggers.py), que implementa diferentes níveis de log com parâmetros como `message`, `level` e outros opcionais.
-  - O método `execute_sql()` no arquivo [database.py](src/database/tipos_base/database.py), que executa comandos SQL com parâmetros como `sql`, `max_retries` e `commit`.
-  - A função `makeRed()` no arquivo [color_text.py](src/logger/color_text.py), que transforma o texto em vermelho e devolve uma string para ser printada para o user.
+- Receber dados dos sensores;
+- Ligar ou desligar o relé (bomba d'água) de acordo com a lógica criada pelo grupo;
+- Armazenar manualmente os dados do monitor serial em um banco de dados SQL (simulado em Python);
+- Implementar as operações CRUD básicas no banco de dados;
 
 
-  Esses subalgoritmos são fundamentais para garantir a modularidade, a reutilização de código e a manutenção eficiente do sistema.
+## Entrega 1: Sistema de Sensores e Controle com ESP32
 
+### 1️⃣ Circuito de sensores
 
-- **Estruturas de dados**: O projeto faz uso de diferentes estruturas de dados para organizar e manipular informações de forma eficiente. Exemplos incluem:
+O circuito de sensores foi montado utilizando o ESP32, com os seguintes componentes:
 
-  - **Listas**: Utilizadas para obter coleções de dados, como no arquivo [query.py](src/database/tipos_base/query.py).
-  - **Tuplas**: Empregadas para representar conjuntos imutáveis de dados, como no retorno de múltiplos valores em funções no arquivo [senha.py](src/database/login/senha.py).
-  - **Dicionários**: Usados para mapear pares chave-valor, como na serialização e desserialização de dados no arquivo [senha.py](src/database/login/senha.py).
-  - **Tabelas de memória**: Implementadas no contexto de manipulação de dados em memória, como no uso de `pandas` para exibir e processar tabelas no arquivo [model.py](src/database/tipos_base/model.py).
-  - **Classes e Dataclasses**: O arquivo [model.py](src/database/tipos_base/model.py) é um exemplo central do uso de dataclasses para representar modelos de dados. Ele utiliza:
+<p align="center"><img src="assets/sistema-de-Irrigacao.png" alt="Circuito de sensores" border="0" width=40% height=40%></p>
 
-    - **Dataclasses**: Para definir modelos de dados com campos fortemente tipados, como `id` e outros atributos específicos.
-    - **Métodos utilitários**: Como `to_dict()` e `from_dict()` para converter instâncias em dicionários e vice-versa.
-    - **Enums**: Para representar valores fixos e categóricos, garantindo consistência nos dados.
-    - **Pandas DataFrames**: Para exibir e manipular dados em formato tabular, como no método `get_dataframe()`.
+Abaixo estão os componentes utilizados:
+- 1x ESP32
+- 1x Sensor LDR representando o Sensor de pH
+- 1x Sensor de temperatura e umidade DHT22
+- 1x Botão representando o Sensor de Fósforo
+- 1x Botão representando o Sensor de Potássio
+- 1x Botão representando a Api meteorológica
+- 1x Relé
+- 1x Led representando a bomba d'água
 
+### Código do ESP32
 
-  Essas estruturas são essenciais para organizar os dados de forma clara e eficiente, permitindo que o sistema seja escalável e de fácil manutenção.
+O código do ESP32 foi desenvolvido em C++, e pode ser encontrado no arquivo [sketch.ino](src/wokwi/sketch.ino). 
+O código é responsável por monitorar a necessidade de irrigação em uma plantação, simulando sensores de nutrientes e condições ambientais.
 
+## Funcionamento
 
-- **Manipulação de arquivos: texto e JSON**: A manipulação de arquivos é um dos pilares deste projeto, permitindo exportar e importar dados no formato JSON, além de registrar logs em arquivos de texto. Os principais arquivos relacionados a essa funcionalidade são:
-    - **[loggers.py](src/logger/loggers.py)**: Responsável por registrar logs em um arquivo de texto (`log.txt`). A função `log()` permite gravar mensagens com diferentes níveis de severidade (INFO, WARNING, ERROR, etc.), enquanto as funções auxiliares (`log_info`, `log_error`, etc.) simplificam o uso. O arquivo de log é atualizado automaticamente sempre que uma mensagem é registrada.
-    - **[exportar_json_generico.py](src/menu/generico/exportar_json_generico.py)**: Implementa a exportação de dados de modelos para arquivos JSON. A função `exportar_json_generico()` obtém os dados do banco de dados, os exibe em formato tabular e os salva em um arquivo JSON no diretório configurado (`EXPORTS_DIR`). Logs são gerados para informar o progresso e possíveis erros durante o processo.
-    - **[importar_json_generico.py](src/menu/generico/importar_json_generico.py)**: Gerencia a importação de dados de arquivos JSON para o banco de dados. A função `importar_json_generico()` lê arquivos JSON do diretório configurado (`IMPORTS_DIR`), valida os dados e os insere no banco de dados. Logs detalhados são gerados para registrar sucessos e falhas.
+O código lê o estado de cada sensor e, caso dois ou mais estejam em condição crítica, aciona o relé da bomba de irrigação e um LED indicativo. Se a "API meteorológica" (botão vermelho) indicar chuva, a irrigação é interrompida.
 
+### Exemplos de Trechos do Código
 
-- **Conexão com banco de dados: Oracle**: A conexão com o banco de dados Oracle é um ponto central do projeto e pode ser observada nos seguintes arquivos:
+- **Definição dos pinos dos sensores e atuadores:**
+  ```cpp
+  #define BUTTON_P 5        // Botão de fósforo (azul)
+  #define BUTTON_K 4        // Botão de potássio (amarelo)
+  #define LDR_PIN 14        // Pino analógico para simular pH via LDR
+  #define DHTPIN 12         // Sensor DHT22 (umidade)
+  #define RELAY_PIN 34      // Relé que aciona a bomba
+  #define LED_PIN 2         // LED indicativo da bomba
+  #define BUTTON_API 18     // Botão de API Meteorológica (vermelho)
+  ```
 
-  - **[main.py](src/main.py)**: A função `main()` chama `iniciar_database()` para estabelecer a conexão inicial com o banco de dados e `check_or_create_tables()` para verificar ou criar as tabelas necessárias.
-  - **[iniciar_database.py](src/database/login/iniciar_database.py)**: Contém a lógica para inicializar a conexão com o banco de dados Oracle, utilizando as credenciais fornecidas pelo usuário ou armazenadas em um arquivo codificado. A função `Database.init_oracledb()` é usada para estabelecer a conexão.
-  - **[init_tables.py](src/database/models/init_tables.py)**: Verifica e cria as tabelas no banco de dados, chamando os métodos `check_or_create_table()` das classes de modelo.
-  - **[model.py](src/database/tipos_base/model.py)**: Define a estrutura das tabelas e implementa métodos como `check_or_create_table()` e `save()` para interagir diretamente com o banco de dados Oracle, incluindo a criação, atualização e exclusão de registros.
+- **Leitura dos sensores e botões:**
+  ```cpp
+  int ldrValue = analogRead(LDR_PIN);
+  float umidade = dht.readHumidity();
+  bool leituraFosforo = digitalRead(BUTTON_P);
+  bool leituraPotassio = digitalRead(BUTTON_K);
+  bool leituraAPI = digitalRead(BUTTON_API);
+  ```
 
-  Esses arquivos trabalham em conjunto para garantir que a aplicação se conecte ao banco de dados Oracle e gerencie as tabelas e dados de forma eficiente.
+- **Lógica de decisão para acionar a irrigação:**
+  ```cpp
+  if (condicoesCriticas >= 2 && condicoesAPI == 0) {
+    digitalWrite(RELAY_PIN, HIGH);  // Liga a bomba
+    digitalWrite(LED_PIN, HIGH);    // Liga o LED indicativo
+  } else {
+    digitalWrite(RELAY_PIN, LOW);   // Desliga a bomba
+    digitalWrite(LED_PIN, LOW);     // Desliga o LED
+  }
+  ```
 
+- **Exemplo de condição crítica:**
+  - LDR (pH): `ldrValue > 1400`
+  - Umidade: `umidade < 60`
+  - Fósforo e Potássio: botões desligados
 
+## Resumo
 
-## 🛠️ Problemas Solucionados
-
-### 1️⃣ Estrutura Modular e Lógica Clara
-O projeto segue uma **estrutura modular** bem organizada, com cada funcionalidade separada em arquivos e classes específicas. A lógica é clara e objetiva, com funções bem definidas para cada etapa, como:
-- **Conexão ao banco de dados**.
-- **Manipulação de dados** (cadastro, edição, exclusão, listagem).
-- **Interação com o usuário**.
-
-Essa abordagem facilita a **compreensão**, **manutenção** e **escalabilidade** do código.
-
----
-
-### 2️⃣ Relevância aos Requisitos
-O projeto atende diretamente aos requisitos solicitados, incluindo:
-- **Conexão com o banco de dados Oracle**.
-- **Manipulação de dados**: cadastro, edição, exclusão e listagem.
-- **Exportação/Importação em JSON**.
-- **Apresentação de relatórios**.
-
-Todas as funcionalidades foram implementadas de forma alinhada ao objetivo principal: **criar um sistema de gestão eficiente para o agronegócio**.
-
----
-
-### 3️⃣ Validação de Dados de Entrada
-Para evitar inconsistências nos dados, o código utiliza funções específicas de validação, como:
-- `input_int`
-- `input_str`
-- `input_bool`
-- `input_enum`
-
-Essas funções garantem que os dados inseridos pelo usuário sejam do tipo correto, evitando erros durante a gravação no banco de dados. Além disso:
-- **Mensagens de erro claras** são exibidas em caso de entradas inválidas.
+O sistema automatiza a irrigação com base em múltiplos fatores do solo e previsão de chuva, tornando o processo mais eficiente e inteligente.
 
 ---
 
-### 4️⃣ Apresentação Limpa e Usabilidade
-Mesmo em um ambiente de linha de comando, o projeto prioriza a **boa usabilidade**:
-- Utiliza a biblioteca **pandas** para exibir dados em formato tabular, tornando a apresentação mais organizada e fácil de entender.
-- Mensagens informativas e logs guiam o usuário durante a interação com o sistema, proporcionando uma **experiência fluida e intuitiva**.
-- Prints coloridos deixam a apresentação mais agradável e fácil de ler.
+### 2️⃣ Armazenamento de Dados em Banco SQL com Python
+
+O armazenamento dos dados coletados pelos sensores foi implementado em Python, utilizando um banco de dados SQL. O código é responsável por criar tabelas, inserir dados e realizar operações CRUD (Criar, Ler, Atualizar e Deletar) no banco de dados.
+
+### MER
+
+O grupo teve que fazer algumas alterações em relação ao modelo de banco de dados apresentado na entrega anterior [treino258/fiap_fase2_cap1](https://github.com/treino258/fiap_fase2_cap1), para que ele se adequasse a nova proposta do projeto. O modelo abaixo representa as novas tabelas criadas para o armazenamento dos dados:
+
+<p align="center">
+  <b>Antigo</b><br>
+  <img src="assets/mer_antigo.png" alt="MER Antigo" border="0" width=40% height=40%>
+</p>
+<br>
+<p align="center">
+  <b>Novo</b><br>
+  <img src="assets/mer.png" alt="MER Novo" border="0" width=40% height=40%>
+</p>
 
 
-## 📁 Estrutura de pastas
+Novo Modelo de Entidade-Relacionamento:
+
+Tabela: CULTURA
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(255) NOT NULL)
+  - observacao (TEXT(1000))
+
+Tabela: PROPRIEDADE
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(100) NOT NULL)
+  - cnpj (VARCHAR(14))
+
+Tabela: CAMPO
+  - id (INTEGER NOT NULL) [PK]
+  - propriedade_id (INTEGER NOT NULL) [FK -> PROPRIEDADE]
+  - identificador (VARCHAR(100) NOT NULL)
+  - area_ha (FLOAT NOT NULL)
+
+Tabela: PLANTIO
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(100) NOT NULL)
+  - campo_id (INTEGER NOT NULL) [FK -> CAMPO]
+  - tipo_cultura (INTEGER NOT NULL) [FK -> CULTURA]
+  - data_inicio (DATETIME NOT NULL)
+  - data_fim (DATETIME)
+  - observacao (TEXT(1000))
+
+Tabela: UNIDADE
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(50) NOT NULL)
+  - multiplicador (FLOAT NOT NULL)
+
+Tabela: TIPO_SENSOR
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(255) NOT NULL)
+  - tipo (VARCHAR(15) NOT NULL)
+
+Tabela: SENSOR
+  - id (INTEGER NOT NULL) [PK]
+  - tipo_sensor_id (INTEGER NOT NULL) [FK -> TIPO_SENSOR]
+  - plantio_id (INTEGER NOT NULL) [FK -> PLANTIO]
+  - nome (VARCHAR(255) NOT NULL)
+  - descricao (VARCHAR(255))
+  - data_instalacao (DATETIME)
+  - unidade_id (INTEGER) [FK -> UNIDADE]
+  - latitude (FLOAT)
+  - longitude (FLOAT)
+
+Tabela: LEITURA_SENSOR
+  - id (INTEGER NOT NULL) [PK]
+  - sensor_id (INTEGER NOT NULL) [FK -> SENSOR]
+  - data_leitura (DATETIME NOT NULL)
+  - valor (FLOAT NOT NULL)
+
+Tabela: IRRIGACAO
+  - id (INTEGER NOT NULL) [PK]
+  - quantidade_total (FLOAT NOT NULL)
+  - data_hora (DATETIME NOT NULL)
+  - observacao (TEXT(1000))
+  - sensor_id (INTEGER NOT NULL) [FK -> SENSOR]
+
+Tabela: NUTRIENTE
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(255) NOT NULL)
+  - observacao (TEXT(1000))
+
+Tabela: APLICACAO_NUTRIENTE
+  - id (INTEGER NOT NULL) [PK]
+  - plantio_id (INTEGER NOT NULL) [FK -> PLANTIO]
+  - nutriente_id (INTEGER NOT NULL) [FK -> NUTRIENTE]
+  - unidade_id (INTEGER NOT NULL) [FK -> UNIDADE]
+  - data_aplicacao (DATETIME NOT NULL)
+  - quantidade (FLOAT NOT NULL)
+  - observacao (TEXT(1000))
+
+## Resumo das mudanças entre o modelo antigo e o novo
+
+### Alterações Removidas
+1. **Tabelas e Colunas**:
+   - A tabela `aplicacao_nutrientes` foi removida, incluindo suas colunas:
+     - `id_aplicacao`, `plantio_id_plantio`, `unidade_medida_id_unidade`, `nutriente_id_nutriente`, `data_hora`, `quantidade_aplicada`, `observacao`.
+   - A tabela `leiturasensor` foi removida, incluindo suas colunas:
+     - `id_leitura`, `plantio_id_plantio`, `sensor_id_sensor`, `unidade_medida_id_unidade`, `data_hora_leitura`, `valor_lido`.
+   - A tabela `unidade_medida` foi removida, incluindo suas colunas:
+     - `id_unidade`, `nome`.
+
+2. **Relacionamentos**:
+   - Relacionamentos envolvendo as tabelas removidas (`aplicacao_nutrientes`, `leiturasensor`, `unidade_medida`) foram eliminados.
+
+3. **Colunas Específicas**:
+   - A coluna `localizacao_geo` foi removida da tabela `campo`.
+   - A coluna `localizacao` foi removida da tabela `sensor`.
+
+### Alterações Adicionadas
+1. **Tabelas e Colunas**:
+   - Novas tabelas foram adicionadas:
+     - `APLICACAO_NUTRIENTE` com colunas: `id`, `plantio_id`, `nutriente_id`, `unidade_id`, `data_aplicacao`, `quantidade`, `observacao`.
+     - `LEITURA_SENSOR` com colunas: `id`, `sensor_id`, `data_leitura`, `valor`.
+     - `UNIDADE` com colunas: `id`, `nome`, `multiplicador`.
+
+2. **Relacionamentos**:
+   - Novos relacionamentos foram criados para as tabelas adicionadas:
+     - `APLICACAO_NUTRIENTE` agora referencia `PLANTIO`, `NUTRIENTE` e `UNIDADE`.
+     - `LEITURA_SENSOR` agora referencia `SENSOR`.
+
+3. **Colunas Específicas**:
+   - A tabela `CAMPO` agora possui a coluna `area_ha` em vez de `area_hectares`.
+   - A tabela `SENSOR` agora possui as colunas `latitude` e `longitude`.
+
+### Alterações Gerais
+- Os nomes das tabelas e colunas foram padronizados para maiúsculas no novo modelo.
+- Tipos de dados foram ajustados:
+  - `TIMESTAMP` foi substituído por `DATE` em várias tabelas.
+  - `NUMBER` foi substituído por `FLOAT` em colunas numéricas.
+- Restrições de chave primária e única foram mantidas ou ajustadas para refletir as mudanças nas tabelas e colunas.
+
+Essas alterações refletem uma reorganização e simplificação do modelo de dados, com a remoção de tabelas e colunas redundantes e a introdução de novas estruturas mais alinhadas às necessidades do sistema.
+
+### JUSTIFICATIVA DA ESCOLHA DA ESTRUTURA DE DADOS
+
+A estrutura de dados foi projetada para atender às necessidades de um sistema de gerenciamento agrícola, garantindo flexibilidade, escalabilidade e consistência. Abaixo estão os principais pontos que justificam as escolhas realizadas:
+
+1. **Normalização e Organização**:
+   - O modelo segue os princípios de normalização para evitar redundância de dados e garantir integridade referencial.
+   - As tabelas foram organizadas de forma a refletir entidades reais do domínio agrícola, como `PLANTIO`, `CAMPO`, `SENSOR` e `NUTRIENTE`.
+
+2. **Flexibilidade**:
+   - A inclusão de tabelas como `UNIDADE` e `TIPO_SENSOR` permite a adição de novos tipos de sensores ou unidades de medida sem a necessidade de alterações estruturais significativas.
+   - A tabela `OBSERVACAO` em várias entidades permite armazenar informações adicionais sem comprometer a estrutura principal.
+
+3. **Escalabilidade**:
+   - O uso de tipos de dados como `FLOAT` e `CLOB` garante que o sistema possa lidar com grandes volumes de dados e informações detalhadas.
+   - A separação de tabelas como `LEITURA_SENSOR` e `APLICACAO_NUTRIENTE` permite o registro de eventos históricos, facilitando análises futuras.
+
+4. **Padronização**:
+   - Os nomes das tabelas e colunas foram padronizados em maiúsculas para facilitar a leitura e manter consistência.
+   - Tipos de dados foram escolhidos com base nas melhores práticas para bancos de dados Oracle, como o uso de `DATE` para datas e `VARCHAR2` para strings.
+
+5. **Relacionamentos Claros**:
+   - A utilização de chaves estrangeiras garante a integridade dos dados e define claramente os relacionamentos entre as entidades.
+   - Por exemplo, a tabela `PLANTIO` referencia `CAMPO` e `CULTURA`, enquanto `SENSOR` referencia `TIPO_SENSOR` e `PLANTIO`.
+
+6. **Adaptação às Necessidades do Domínio**:
+   - A estrutura foi adaptada para refletir as operações agrícolas, como o registro de leituras de sensores, aplicações de nutrientes e irrigação.
+   - A inclusão de colunas como `latitude` e `longitude` em `SENSOR` permite a localização geográfica precisa, essencial para análises espaciais.
+
+Essa estrutura foi escolhida para garantir que o sistema seja robusto, fácil de manter e capaz de atender às demandas de um ambiente agrícola em constante evolução.
+
+### EXECUTAR O SISTEMA E REALIZAR OPERAÇÕES CRUD
+
+O sistema foi desenvolvido em Python e utiliza um banco de dados Oracle para armazenar os dados. O código é modularizado, permitindo fácil manutenção e expansão.
+
+## 📦 Requisitos
+- Python 3.13.2
+- Bibliotecas:
+  - oracledb==3.1.0
+  - pandas==2.2.3
+  - matplotlib==3.10.1
+  - streamlit==1.44.1
+  - SQLAlchemy==2.0.40
+
+## 🔗 Instalação
+- Para instalar as dependências, utilize o seguinte comando:
+    ```bash
+    pip install -r requirements.txt
+    ```
+  
+- Para executar o código, utilize o seguinte comando:
+    ```bash
+    streamlit run main_dash.py
+    ```
+    > **Nota:** O código foi desenvolvido para rodar em ambiente local, utilizando o Streamlit.
+
+## Login
+
+- O sistema requer um login para acessar as funcionalidades. O usuário e senha devem ser fornecidos no início da execução.
+
+<p align="center">
+  <img src="assets/dashboard/login.PNG" alt="login" border="0" width=40% height=40%>
+</p>
+
+- DSN: `oracle.fiap.com.br:1521/ORCL`
+- Usuário: `seu usuario no banco de dados da FIAP`
+- Senha: `sua senha no banco de dados da FIAP`
+
+- Após o login, o usuário será direcionado para a tela inicial do sistema.
+
+## Realizando operações CRUD
+- O sistema permite realizar operações CRUD (Criar, Ler, Atualizar e Deletar) em todas as tabelas do banco de dados.
+- As operações são realizadas através de formulários, onde o usuário pode inserir os dados necessários.
+- Após a inserção dos dados, o sistema irá validar as informações e realizar a operação no banco de dados.
+- O sistema também permite visualizar os dados cadastrados, editar e excluir registros.
+- As operações são realizadas através de menus, onde o usuário pode selecionar a operação desejada.
+
+## Leitura de dados (READ)
+
+Para realizar uma operação de leitura, basta o usário selecionar um dos modelos disponíveis no menu principal. O sistema irá exibir os dados cadastrados na tabela selecionada.
+
+<p align="center">
+  <img src="assets/dashboard/read.PNG" alt="leitura" border="0" width=40% height=40%>
+</p>
+
+## Criação de dados (CREATE)
+Para realizar uma operação de criação, basta o usário selecionar um dos modelos disponíveis no menu principal e clicar no botão "Novo". 
+O sistema irá exibir um formulário para o usuário preencher os dados necessários. Esse formulário irá variar de acordo com o modelo selecionado.
+O sistema irá validar os dados e realizar a operação no banco de dados.
+
+<p align="center">
+  <img src="assets/dashboard/create/botao_novo.PNG" alt="criação" border="0" width=40% height=40%>
+</p>
+
+<p align="center">
+  <img src="assets/dashboard/create/botao_salvar.PNG" alt="criação" border="0" width=40% height=40%>
+</p>
+
+<p align="center">
+  <img src="assets/dashboard/create/registro_salvo.PNG" alt="criação" border="0" width=40% height=40%>
+</p>
+
+## Atualização de dados (UPDATE)
+Para realizar uma operação de atualização, basta o usário selecionar um dos modelos disponíveis no menu principal, selecionar uma das linhas e clicar no botão "Editar".
+O sistema irá exibir um formulário com os dados cadastrados. O usuário pode alterar os dados e clicar no botão "Salvar" para atualizar o registro no banco de dados.
+
+<p align="center">
+  <img src="assets/dashboard/update/botao_editar.PNG" alt="atualização" border="0" width=40% height=40%>
+<p>
+
+<p align="center">
+  <img src="assets/dashboard/update/botao_salvar_editar.PNG" alt="atualização" border="0" width=40% height=40%>
+<p>
+
+<p align="center">
+  <img src="assets/dashboard/update/registro_atualizado.PNG" alt="atualização" border="0" width=40% height=40%>
+</p>
+
+## Exclusão de dados (DELETE)
+Para realizar uma operação de exclusão, basta o usário selecionar um dos modelos disponíveis no menu principal, selecionar uma das linhas e clicar no botão "Editar" e posteriormente "Excluir".
+
+<p align="center">
+  <img src="assets/dashboard/delete/botao_editar.PNG" alt="atualização" border="0" width=40% height=40%>
+<p>
+
+<p align="center">
+  <img src="assets/dashboard/delete/botao_excluir.PNG" alt="atualização" border="0" width=40% height=40%>
+<p>
+
+<p align="center">
+  <img src="assets/dashboard/delete/registro_excluido.PNG" alt="atualização" border="0" width=40% height=40%>
+</p>
+
+### Ir Além 1: Dashboard em Python para Visualização dos Dados
+
+TODO
+
+### Ir Além 2: Integração Python com API Pública
+
+TODO
+
+## 📁 Estrutura de pastas (ARRUMAR)
 
 Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
 
@@ -138,102 +399,7 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
   - <b>menu</b>: Exibição e configuração de todos os menus da aplicação, como o da fazenda ([fazenda](src/menu/fazenda/)), insumos ([insumos](src/menu/insumos/)) e maquinário ([maquinario](src/menu/maquinario/)). <b>Obs:</b> a pasta generico compartilha funcionalidades padrões utilizadas por todos os menus. ([menu](src/menu/))
 - <b>README</b>: arquivo que serve como guia e explicação geral sobre o projeto (o mesmo que você está lendo agora).
 
-## 🔧 Como executar o código
-
-- Recomendamos utilizar o python versão 3.12.6 para executar o código.
-- Para iniciar a aplicação é necessário instalar algumas bibliotecas, que são: (<b>arquivo: </b> [requirements.txt](requirements.txt))
-  - oracledb==3.1.0*
-  - pandas==2.2.3*
-  - matplotlib==3.10.1
-- Execute a função abaixo para instalar as bibliotecas (obs.: a instalação pode ocorrer de forma autamática a depender do seu ambiente):  
-  - pip install -r requirements.txt
-  <br> 
-- Inicie a aplicação no [main.py](src/main.py):
-- Informe o usuário do Banco de Dados (exemplo: RM000000) e logo em seguida informe a senha (exemplo: XXXXXX) e posteriormente o dsn. <b>Obs.:</b> caso não haja um usuário, senha e dsn válidos, não será possível seguir.
-- Após a conexão com o Bando de Dados será exibido o menu da aplicação:
-- <b><u>Importante:</u></b> Nessa etapa as tabelas FAZENDA, INSUMO e MAQUINARIO serão criadas no Banco de Dados para que os dados possam ser inseridos. A aplicação também verifica caso já tenham sido criadas antes.
-1) Manutenção de Fazendas
-2) Manutenção de Insumos
-3) Manutenção de Maquinários
-4) Relatórios
-0) Sair
-
-Opção 1: <b>Manutenção de Fazendas:</b> ([menu_fazenda.py](src/menu/fazenda/menu_fazenda.py))
-1) Cadastrar Fazenda
-2) Listar Fazendas
-3) Editar Fazenda
-4) Excluir Fazenda
-5) Exportar Fazendas para JSON
-6) Importar Fazendas de um JSON
-
-* Aqui é possível gerenciar todos os dados da Fazenda, como Cadastrar, Listar, Editar, Excluir, além da Exportação ou Importação dos dados no formato JSON.
-
-Opção 2: <b>Manutenção de Insumos:</b> ([menu_insumos.py](src/menu/insumos/menu_insumos.py))
-1) Cadastrar Insumos
-2) Listar Insumos
-3) Editar Insumos
-4) Excluir Insumos
-5) Exportar Insumos para JSON
-6) Importar Insumos de um JSON
-
-* Aqui é possível gerenciar todos os dados dos Insumos, como Cadastrar, Listar, Editar, Excluir, além da Exportação ou Importação dos dados no formato JSON.
-
-Opção 3: <b>Manutenção de Maquinário:</b> ([menu_maquinario.py](src/menu/maquinario/menu_maquinario.py))
-1) Cadastrar Maquinário
-2) Listar Maquinário
-3) Editar Maquinário
-4) Excluir Maquinário
-5) Exportar Maquinário para JSON
-6) Importar Maquinário de um JSON
-
-* Aqui é possível gerenciar todos os dados do Maquinário, como Cadastrar, Listar, Editar, Excluir, além da Exportação ou Importação dos dados no formato JSON.
-
-Opção 4: <b>Relatórios:</b> ([menu_relatorio.py](src/menu/relatorio/menu_relatorio.py))
-1) Relatório de Fazendas
-2) Relatório de Maquinários
-3) Relatório de Insumos
-
-* Em cada opção de relatório selecionada será exibido a lista de Fazendas, Maquinários ou Insumos cadastrados no Banco de Dados através das opções anteriores do Menu.
-
-<strong>Exemplos de Relatórios:</strong>
-
-- <strong>--- Relatório da Fazenda ---</strong>
-- Nome: Joaozinho
-- Tipo de Cultura: cana
-- Formato: retangulo
-- Base (m): 250.0
-- Altura (m): 500.0
-- Área (m²): 125000.0
-  <br> 
-- <strong>--- Relatório de Maquinário ---</strong>
-- Fazenda: Joaozinho
-- Maquinário: Colheitadeira
-- Área da fazenda (m²): 125000.0
-- Formato da fazenda: Retângulo
-- Largura do equipamento (m): 4.0
-- Velocidade máxima (km/h): 10.0
-- Distância total (km): 3907.24
-- Eficiência (km/l): 20.0
-- Consumo estimado (litros): 195.36
-- Tempo estimado: 558h 10min
-- Número de voltas: 125
-- Rota gerada: Ver arquivo Rota_Colheitadeira_Joaozinho_*.png (aqui é gerado uma imagem com o desenho da rota realizada pelo maquinário, o arquivo é disponibillizado na pasta [file_exports](src/file_exports/).)
-  <br> 
-- <strong>--- Relatório de Insumos ---</strong>
-- Fazenda: Joaozinho
-- Insumo: Fosforo
-- Tipo de Cultura: cana
-- Área total (hectares): 12.5
-- Unidade de medida: kg
-- Consumo por hectare: 50.0 kg/ha
-- Consumo total estimado: 625.0
-- Custo por unidade: R$150.0/kg
-- Custo total estimado: R$93750.0
-- Detalhes: Equivalente a 625.0 kg
-
-
-
-## 🗃 Histórico de lançamentos
+## 🗃 Histórico de lançamentos (ARRUMAR)
 
 * 0.1.3 - 21/04/2025  - Atualização do readme para a inclusão das informações sobre os relatórios.
 * 0.1.2 - 18/04/2025  - Inclusão dos relatórios na aplicação.

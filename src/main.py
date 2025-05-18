@@ -7,7 +7,14 @@ def main():
     configurar_logger()
     iniciar_database()
     Database.create_all_tables(drop_if_exists=False)
-    print(Database.generate_ddl())
-    print(Database.generate_mer())
+    ddl = Database.generate_ddl()
+
+    with open("export.ddl", "w") as f:
+        f.write(ddl)
+
+    mer = Database.generate_mer()
+
+    with open("export.mer", "w") as f:
+        f.write(mer)
 
 main()
