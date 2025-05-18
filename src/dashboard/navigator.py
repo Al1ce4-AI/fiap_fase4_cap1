@@ -1,5 +1,6 @@
 import streamlit as st
 
+from src.dashboard.api_metereologica.views import previsao_do_tempo
 from src.dashboard.database.exportar import exportar_db_page
 from src.dashboard.database.importar import importar_db_page
 from src.dashboard.global_messages import get_global_messages
@@ -46,6 +47,7 @@ def navigation():
         grafico_ph.get_page(),
         grafico_fosforo.get_page(),
         grafico_potassio.get_page(),
+        previsao_do_tempo.get_page(),
         exportar_db_page,
         importar_db_page,
     ])

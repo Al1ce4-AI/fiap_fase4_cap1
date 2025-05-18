@@ -1,5 +1,6 @@
 import streamlit as st
 
+from src.dashboard.api_metereologica.views import previsao_do_tempo
 from src.dashboard.database.exportar import exportar_db_page
 from src.dashboard.database.importar import importar_db_page
 from src.dashboard.generic.table_view import TableView
@@ -47,6 +48,16 @@ def plot_menu():
     st.sidebar.page_link(grafico_fosforo.get_page())
     st.sidebar.page_link(grafico_potassio.get_page())
 
+
+def weather_menu():
+    """
+    Função para exibir o menu lateral do aplicativo.
+    Cria as páginas de gráficos para os modelos do banco de dados.
+    """
+
+    st.sidebar.header("Clima")
+    st.sidebar.page_link(previsao_do_tempo.get_page())
+
 def export_import_menu():
     """
     Função para exibir o menu lateral do aplicativo.
@@ -67,5 +78,6 @@ def menu():
     st.sidebar.page_link(get_principal_page())
     crud_menu()
     plot_menu()
+    weather_menu()
     export_import_menu()
 

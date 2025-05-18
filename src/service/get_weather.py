@@ -1,7 +1,7 @@
 import requests
 from time import sleep
 
-def obter_dados_clima(api_key, cidade, tentativas=3):
+def obter_dados_clima(cidade, api_key="de1bb26d32dfb587a64ca1c564b22d8a", tentativas=3):
     base_url = "http://api.openweathermap.org/data/2.5/weather"
     params = {
         "q": cidade,
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     API_KEY = "de1bb26d32dfb587a64ca1c564b22d8a"
     CIDADE = "São Paulo"
 
-    clima = obter_dados_clima(API_KEY, CIDADE)
+    clima = obter_dados_clima(CIDADE, API_KEY)
 
     if clima:
         print("\nDados Climáticos Atuais:")
