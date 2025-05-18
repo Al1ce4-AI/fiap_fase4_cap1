@@ -6,7 +6,7 @@ import os
 from src.database.tipos_base.model import Model
 
 
-def import_models() -> dict[str, type[Model]]:
+def import_models(sort:bool=False) -> dict[str, type[Model]]:
     """
     Importa dinamicamente todas as classes que herdam de Model
     na pasta src/python/database/models.
@@ -35,6 +35,9 @@ def import_models() -> dict[str, type[Model]]:
                 if issubclass(obj, Model) and obj is not Model:
                     # logging.debug(f"Encontrada classe modelo: {name}")
                     models[name] = obj
+
+    if sort:
+        models = dict(sorted(models.items(), key=lambda item: item[1].__database_import_order__))
 
     return models
 

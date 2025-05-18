@@ -6,6 +6,8 @@ def main():
     """Função principal do programa."""
     configurar_logger()
     iniciar_database()
-    Database.create_all_tables(drop_if_exists=True)
+    Database.create_all_tables(drop_if_exists=False)
+    print(Database.generate_ddl())
+    print(Database.generate_mer())
 
 main()

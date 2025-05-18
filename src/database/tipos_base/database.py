@@ -1,8 +1,12 @@
 from contextlib import contextmanager
+from io import StringIO
+
 from sqlalchemy import create_engine, Engine, MetaData
 from sqlalchemy.orm import sessionmaker, Session
 from typing import Generator
 import json
+
+from sqlalchemy.sql.ddl import CreateTable
 
 from src.settings import SQL_ALCHEMY_DEBUG
 
@@ -104,7 +108,7 @@ class Database:
         from src.database.tipos_base.model import Model
         from src.database.dynamic_import import import_models
 
-        import_models()
+        import_models(sort=True)
 
         try:
             Model.metadata.create_all(bind=cls.engine)
@@ -130,3 +134,51 @@ class Database:
         except Exception as e:
             print("Erro ao remover tabelas do banco de dados.")
             raise
+
+    @classmethod
+    def generate_ddl(cls,) -> str:
+        """
+        Gera os comandos SQL (DDL) para criar as tabelas baseadas nos models.
+        """
+
+        #Os imports são feitos dentro da função para evitar problemas de importação circular.
+        from src.database.tipos_base.model import Model
+        # É necessário importar os models para que as tabelas sejam criadas corretamente.
+        from src.database.dynamic_import import import_models
+
+        import_models(sort=True)
+
+        output = StringIO()
+
+        for table in Model.metadata.sorted_tables:
+            ddl_statement = str(CreateTable(table).compile(cls.engine))
+            output.write(ddl_statement + ";\n\n")
+
+        return output.getvalue()
+
+    @classmethod
+    def generate_mer(cls) -> str:
+        """
+        Retorna um MER simplificado baseado nos models e relacionamentos declarados.
+        """
+        #Os imports são feitos dentro da função para evitar problemas de importação circular.
+        from src.database.tipos_base.model import Model
+        # É necessário importar os models para que as tabelas sejam carregadas corretamente.
+        from src.database.dynamic_import import import_models
+
+        import_models(sort=True)
+        mer_output = "\nModelo de Entidade-Relacionamento:\n\n"
+
+        for table in Model.metadata.tables.values():
+            mer_output += f"Tabela: {table.name}\n"
+            for column in table.columns:
+                col_info = f"  - {column.name} {f'({column.type} NOT NULL)' if not column.nullable else f'({column.type})'}"
+                if column.primary_key:
+                    col_info += " [PK]"
+                if column.foreign_keys:
+                    foreign_table = list(column.foreign_keys)[0].column.table.name
+                    col_info += f" [FK -> {foreign_table}]"
+                mer_output += col_info + "\n"
+            mer_output += "\n"
+
+        return mer_output
