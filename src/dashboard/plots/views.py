@@ -1,5 +1,11 @@
 from src.dashboard.plots.plot_view import PlotView, TipoGraficoEnum
+from src.dashboard.plots.todas_leituras.view_todas_leituras import PlotAllView
 from src.database.models.sensor import TipoSensorEnum
+
+grafico_tudo = PlotAllView(
+    title="Gráfico de Todas as Leituras",
+    url_path="/graficotudo",
+)
 
 grafico_umidade_view = PlotView(
     title="Gráfico de Umidade",

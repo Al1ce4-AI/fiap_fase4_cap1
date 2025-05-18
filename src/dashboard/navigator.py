@@ -4,7 +4,7 @@ from src.dashboard.database.exportar import exportar_db_page
 from src.dashboard.database.importar import importar_db_page
 from src.dashboard.global_messages import get_global_messages
 from src.dashboard.plots.views import grafico_umidade_view, grafico_estado_do_rele, grafico_ph, grafico_fosforo, \
-    grafico_potassio
+    grafico_potassio, grafico_tudo
 from src.dashboard.principal import get_principal_page
 from src.dashboard.generic.table_view import TableView
 from src.database.dynamic_import import import_models
@@ -40,6 +40,7 @@ def navigation():
     current_page = st.navigation([
         get_principal_page(),
         *get_generic_pages(),
+        grafico_tudo.get_page(),
         grafico_umidade_view.get_page(),
         grafico_estado_do_rele.get_page(),
         grafico_ph.get_page(),
