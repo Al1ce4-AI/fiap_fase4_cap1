@@ -329,6 +329,12 @@ Para realizar uma operação de leitura, basta o usário selecionar um dos model
   <img src="assets/dashboard/read.PNG" alt="leitura" border="0" width=80% height=80%>
 </p>
 
+💡 Exemplo de consulta SQL para operação READ:
+```sql
+SELECT "PROPRIEDADE".id, "PROPRIEDADE".nome, "PROPRIEDADE".cnpj
+FROM "PROPRIEDADE" ORDER BY "PROPRIEDADE".id
+```
+
 ## Criação de dados (CREATE)
 Para realizar uma operação de criação, basta o usário selecionar um dos modelos disponíveis no menu principal e clicar no botão "Novo". 
 O sistema irá exibir um formulário para o usuário preencher os dados necessários. Esse formulário irá variar de acordo com o modelo selecionado.
@@ -346,6 +352,11 @@ O sistema irá validar os dados e realizar a operação no banco de dados.
   <img src="assets/dashboard/create/registro_salvo.PNG" alt="criação" border="0" width=80% height=80%>
 </p>
 
+💡 Exemplo de operação CREATE:
+```sql
+INSERT INTO "PROPRIEDADE" (id, nome, cnpj) VALUES ("PROPRIEDADE_SEQ_ID".nextval, 'Nova Propriedade', NULL) RETURNING "PROPRIEDADE".id INTO :ret_0
+```
+
 ## Atualização de dados (UPDATE)
 Para realizar uma operação de atualização, basta o usário selecionar um dos modelos disponíveis no menu principal, selecionar uma das linhas e clicar no botão "Editar".
 O sistema irá exibir um formulário com os dados cadastrados. O usuário pode alterar os dados e clicar no botão "Salvar" para atualizar o registro no banco de dados.
@@ -362,6 +373,13 @@ O sistema irá exibir um formulário com os dados cadastrados. O usuário pode a
   <img src="assets/dashboard/update/registro_atualizado.PNG" alt="atualização" border="0" width=80% height=80%>
 </p>
 
+
+💡 Exemplo de operação UPDATE:
+```sql
+ UPDATE "PROPRIEDADE" SET nome='Update propriedade' WHERE "PROPRIEDADE".id = 3
+```
+
+
 ## Exclusão de dados (DELETE)
 Para realizar uma operação de exclusão, basta o usário selecionar um dos modelos disponíveis no menu principal, selecionar uma das linhas e clicar no botão "Editar" e posteriormente "Excluir".
 
@@ -377,9 +395,32 @@ Para realizar uma operação de exclusão, basta o usário selecionar um dos mod
   <img src="assets/dashboard/delete/registro_excluido.PNG" alt="atualização" border="0" width=80% height=80%>
 </p>
 
-### Importar Tabela com os dados
+💡 Exemplo de operação DELETE:
+```sql
+DELETE FROM "PROPRIEDADE" WHERE "PROPRIEDADE".id = 3
+```
 
-TODO
+### Importar Tabelas com os dados
+
+As tabelas com os dados utilizados no sistema podem ser encontradas na pasta em `assets/database_export.zip`.
+
+O arquivo zip contém os arquivos no formato CSV, que podem ser importados para o banco de dados utilizando o dashboard, conforme passos abaixo.
+
+1. O usuário deve selecionar a opção "Importar Banco de Dados" no menu principal.
+<p align="center">
+  <img src="assets/dashboard/importar_banco_de_dados/importar_banco_de_dados.PNG" alt="importar_db" border="0" width=80% height=80%>
+</p>
+
+2. Selecione o arquivo ZIP localizado em `assets/database_export.zip`, espere carregar, role a página até o final e clique no botão "Salvar no Banco de Dados".
+<p align="center">
+  <img src="assets/dashboard/importar_banco_de_dados/salvar_no_banco_de_dados.PNG" alt="salvar_db" border="0" width=80% height=80%>
+</p>
+
+3. Não feche a janela e espere a operação ser concluída. Após a conclusão, o sistema irá exibir uma mensagem de sucesso. Caso ocorra algum erro, tente novamente.
+
+<p align="center">
+  <img src="assets/dashboard/importar_banco_de_dados/importacao_concluida.PNG" alt="salvar_db" border="0" width=80% height=80%>
+</p>
 
 ### Ir Além 1: Dashboard em Python para Visualização dos Dados
 
@@ -391,6 +432,59 @@ Conforme solicitado no enunciado, o dashboard permite realizar atualizações de
 
 Para atualizar a leitura de um sensor, o usario deverá selecionar a opção "Leituras de Sensores" no menu principal. Em seguida, o usuário pode clicar no botão "Editar" para modificar os dados de uma leitura específica. 
 Após realizar as alterações, o usuário deve clicar no botão "Salvar" para atualizar o registro no banco de dados, conforme mencionado nas operações CRUD.
+
+## Funcionamento API
+
+#  1. Objetivo
+  Fornecer dados meteorológicos para auxiliar na decisão de irrigação automática, integrando-se com sensores locais e o sistema de controle.
+
+# 2. Endpoints Principais
+
+  GET /previsao?cidade={cidade}
+  Retorna:
+  {
+    "temperatura": 25.5,
+    "umidade_ar": 65,
+    "chuva": false,
+    "condicao": "Ensolarado"
+  }
+
+# 3. Parâmetros de Decisão
+
+  A API considera:
+  Umidade do solo (<30% = irrigar)
+  Previsão de chuva (se true = não irrigar)
+  pH do solo (5.5 a 7.0 = ideal)
+
+# 4. Fluxo Típico
+
+  Sistema envia cidade do plantio
+  API retorna condições climáticas
+  Lógica local combina com dados de sensores
+  Toma decisão de irrigação
+
+# 5. Exemplo de Uso
+
+  python
+  dados = obter_dados_clima("Campinas")
+  if not dados["chuva"] and umidade_solo < 30:
+      acionar_irrigacao()
+
+# 6. Requisitos
+  Chave API válida
+  Conexão internet
+  Formato cidade: "Cidade,UF" (opcional)
+
+# 7. Segurança
+Limite: 60 chamadas/minuto
+Dados criptografados em trânsito
+
+## 8. Códigos de Erro
+
+  401: Chave inválida
+  404: Cidade não encontrada
+  429: Limite excedido
+
 
 <p align="center">
   <img src="assets/dashboard/atualizacao_leitura.PNG" alt="atualização_leitura" border="0" width=80% height=80%>
@@ -416,26 +510,26 @@ Posteriormente, o usuário deve clicar no botão "Gerar Simulação" para visual
 
 TODO
 
-## 📁 Estrutura de pastas (ARRUMAR)
+## 📁 Estrutura de pastas
 
 Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
 
 - <b>.github</b>: Nesta pasta ficarão os arquivos de configuração específicos do GitHub que ajudam a gerenciar e automatizar processos no repositório.
 - <b>assets</b>: aqui estão os arquivos relacionados a elementos não-estruturados deste repositório, como imagens.
 - <b>src</b>: Todo o código fonte criado para o desenvolvimento do projeto ao longo de todas as fases.
-  - <b>database</b>: Execução dos comandos de banco de dados, como Conectar, Cadastrar, Listar, Editar e Excluir. ([database](src/database/))
-  - <b>file_exports</b>: Arquivos exportados do Bando de Dados no formato JSON. ([file_exports](src/file_exports/))
-  - <b>file_imports</b>: Arquivos no formato JSON para importar no Banco de Dados. ([file_imports](src/file_imports/))
-  - <b>logger</b>: Arquivos de formatação da aplicação. ([logger](src/logger/))
-  - <b>menu</b>: Exibição e configuração de todos os menus da aplicação, como o da fazenda ([fazenda](src/menu/fazenda/)), insumos ([insumos](src/menu/insumos/)) e maquinário ([maquinario](src/menu/maquinario/)). <b>Obs:</b> a pasta generico compartilha funcionalidades padrões utilizadas por todos os menus. ([menu](src/menu/))
+  - <b>dashboard</b>: Código do dashboard desenvolvido em Python, utilizando a biblioteca Streamlit. ([dashboard](src/dashboard/))
+  - <b>database</b>: Execução dos comandos de banco de dados, como Conectar, Cadastrar, Listar, Editar e Excluir.
+  - <b>irrigacao</b>: Código responsável por controlar a irrigação, acionando o relé da bomba de irrigação e o LED indicativo.
+  - <b>logger</b>: Código responsável por registrar as operações realizadas no banco de dados, como inserções, atualizações e exclusões.
+  - <b>service</b>: Conexão com a api pública de previsão do tempo, responsável por coletar dados meteorológicos.
+  - <b>wokwi</b>: Código do ESP32, responsável por monitorar a necessidade de irrigação em uma plantação, simulando sensores de nutrientes e condições ambientais.
 - <b>README</b>: arquivo que serve como guia e explicação geral sobre o projeto (o mesmo que você está lendo agora).
+- <b>main_dash</b>: arquivo principal do dashboard, onde o código é executado. Ele foi colocado nesta localização para evitar problemas com imports
 
-## 🗃 Histórico de lançamentos (ARRUMAR)
+## 🗃 Histórico de lançamentos
 
-* 0.1.3 - 21/04/2025  - Atualização do readme para a inclusão das informações sobre os relatórios.
-* 0.1.2 - 18/04/2025  - Inclusão dos relatórios na aplicação.
-* 0.1.1 - 17/04/2025  - Atualização do readme para a inclusão de informações sobre o projeto e melhorias na formatação do código.
-* 0.1.0 - 15/04/2025  - Versão preliminar da nossa aplicação que inclui a geração do script de Banco de Dados
+* 0.1.1 - 18/05/2025  - Atualizações do readme, melhorias no código e correção de bugs
+* 0.1.0 - 16/05/2025  - Versão preliminar da nossa aplicação
 
 ## 📋 Licença
 
