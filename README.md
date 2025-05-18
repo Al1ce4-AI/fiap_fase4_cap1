@@ -377,13 +377,40 @@ Para realizar uma operação de exclusão, basta o usário selecionar um dos mod
   <img src="assets/dashboard/delete/registro_excluido.PNG" alt="atualização" border="0" width=80% height=80%>
 </p>
 
-### Importar Tabela com dados
+### Importar Tabela com os dados
 
 TODO
 
 ### Ir Além 1: Dashboard em Python para Visualização dos Dados
 
-TODO
+O projeto inclui um dashboard desenvolvido em Python, utilizando a biblioteca Streamlit, que permite visualizar os dados armazenados no banco de dados de forma interativa e amigável. O dashboard apresenta gráficos e tabelas que facilitam a análise dos dados coletados pelos sensores.
+
+## Atualizações de registro no Dashboard
+
+Conforme solicitado no enunciado, o dashboard permite realizar atualizações de registro diretamente na interface. O usuário pode selecionar um registro, editar os dados e salvar as alterações, que serão refletidas no banco de dados.
+
+Para atualizar a leitura de um sensor, o usario deverá selecionar a opção "Leituras de Sensores" no menu principal. Em seguida, o usuário pode clicar no botão "Editar" para modificar os dados de uma leitura específica. 
+Após realizar as alterações, o usuário deve clicar no botão "Salvar" para atualizar o registro no banco de dados, conforme mencionado nas operações CRUD.
+
+<p align="center">
+  <img src="assets/dashboard/atualizacao_leitura.PNG" alt="atualização_leitura" border="0" width=80% height=80%>
+</p>
+
+## Visualização de gráficos reais ou simulados
+
+O dashboard também inclui gráficos que representam os dados coletados pelos sensores. Esses gráficos podem ser gerados a partir de dados reais ou simulados, dependendo da opção selecionada.
+
+Para visualizar os gráficos o usuário deve selecionar uma das opções de "Gráficos" no menu principal. 
+A seguir, o usario deverá selecionar o sensor ou sensores desejados, data inicial e data final.
+Posteriormente, o usuário deve clicar no botão "Gerar Simulação" para visualizar dados simulados ou "Gerar Gráfico" para visualizar dados reais.
+
+<p align="center">
+  <img src="assets/dashboard/grafico1.PNG" alt="graficos" border="0" width=80% height=80%>
+</p>
+<p align="center">
+  <img src="assets/dashboard/grafico2.PNG" alt="graficos" border="0" width=80% height=80%>
+</p>
+
 
 ### Ir Além 2: Integração Python com API Pública
 
