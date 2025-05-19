@@ -400,7 +400,7 @@ Para realizar uma operação de exclusão, basta o usário selecionar um dos mod
 DELETE FROM "PROPRIEDADE" WHERE "PROPRIEDADE".id = 3
 ```
 
-### Importar Tabelas com os dados
+## Importar Tabelas com os dados
 
 As tabelas com os dados utilizados no sistema podem ser encontradas na pasta em `assets/database_export.zip`.
 
