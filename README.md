@@ -476,8 +476,8 @@ Após realizar as alterações, o usuário deve clicar no botão "Salvar" para a
   Formato cidade: "Cidade,UF" (opcional)
 
 # 7. Segurança
-Limite: 60 chamadas/minuto
-Dados criptografados em trânsito
+  Limite: 60 chamadas/minuto
+  Dados criptografados em trânsito
 
 ## 8. Códigos de Erro
 
