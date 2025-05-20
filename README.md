@@ -45,6 +45,8 @@ O circuito de sensores foi montado utilizando o ESP32, com os seguintes componen
 
 <p align="center"><img src="assets/sistema-de-Irrigacao.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
+    - link do sistem no Wokwi: https://wokwi.com/projects/430957703173076993
+
 Abaixo estão os componentes utilizados:
 - 1x ESP32
 - 1x Sensor LDR representando o Sensor de pH
