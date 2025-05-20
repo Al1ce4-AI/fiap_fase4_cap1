@@ -77,39 +77,49 @@ class Irrigacao(Model):
             try:
                 plantio = session.query(Plantio).get(plantio_id)
                 if not plantio:
-                    raise ValueError("Plantio não encontrado")
+                    return False, {'erro': 'Plantio não encontrado'}
 
-                sensores = {
-                    'umidade': cls._get_ultima_leitura(session, plantio_id, 'H'),
-                    'ph': cls._get_ultima_leitura(session, plantio_id, 'pH'),
-                    'clima': obter_dados_clima(cidade)
-                }
+                try:
+                    umidade = cls._get_ultima_leitura(session, plantio_id, 'H')
+                except Exception as umidade_error:
+                    umidade = 100
+                    logging.warning(f"Falha ao obter umidade: {str(umidade_error)}")
 
-                umidade = sensores.get('umidade', 100)
-                ph = sensores.get('ph', 7.0)
-                chuva = sensores.get('clima', {}).get('chuva', True)
+                try:
+                    ph = cls._get_ultima_leitura(session, plantio_id, 'pH')
+                except Exception as ph_error:
+                    ph = 7.0 
+                    logging.warning(f"Falha ao obter pH: {str(ph_error)}")
+
+                try:
+                    clima = obter_dados_clima(cidade)
+                except Exception as clima_error:
+                    clima = {'chuva': True}
+                    logging.warning(f"Falha ao obter clima: {str(clima_error)}")
 
                 deve_irrigar = (
                     umidade < 30 and
-                    not chuva and
+                    not clima.get('chuva', True) and
                     5.5 <= ph <= 7.0
                 )
                 
-                return deve_irrigar, sensores
+                return deve_irrigar, {
+                    'umidade': umidade,
+                    'ph': ph,
+                    'clima': clima
+                }
 
-            except Exception as e:
-                logging.exception("Falha na decisão de irrigação")
-            
-            return False, {
-                'umidade': 100,
-                'ph': 7.0,
-                'clima': {'chuva': True},
-                'erro': str(e)
-            }
+            except Exception as main_error:
+                logging.error(f"Erro geral na decisão de irrigação: {str(main_error)}")
+                return False, {
+                    'erro': str(main_error),
+                    'umidade': 100,
+                    'ph': 7.0,
+                    'clima': {'chuva': True}
+                }
 
     @staticmethod
     def _get_ultima_leitura(session, plantio_id: int, tipo_sensor: str) -> float:
-        """Método robusto para leituras de sensores"""
         try:
             tipo = session.query(TipoSensor).filter(
                 TipoSensor.tipo == tipo_sensor

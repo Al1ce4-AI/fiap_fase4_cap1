@@ -1,5 +1,6 @@
 import logging
 
+from database.generator.criar_sensores import criar_sensores_padrao
 from src.database.tipos_base.database import Database
 import streamlit as st
 
@@ -14,3 +15,4 @@ def setup():
         st.session_state['init_tables'] = True
         logging.info("Tabelas criadas com sucesso.")
         st.success("Tabelas criadas com sucesso.")
+        criar_sensores_padrao(plantio_id=1)

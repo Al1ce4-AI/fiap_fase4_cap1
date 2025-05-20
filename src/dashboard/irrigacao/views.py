@@ -25,15 +25,12 @@ def get_irrigacao_page():
             key="cidade_input"
         )
 
-        if st.button("Analisar Necessidade de Irrigação", 
-                    type="primary", 
-                    disabled=not cidade):
-            
+        if st.button("Analisar Necessidade de Irrigação", type="primary"):
             try:
-                deve_irrigar, dados = Irrigacao.decidir_irrigacao(
-                    plantio_id=plantio.id,
-                    cidade=cidade
-                )
+                deve_irrigar, dados = Irrigacao.decidir_irrigacao(plantio.id, cidade)
+                
+                if 'erro' in dados:
+                    st.warning(f"Aviso: {dados['erro']}")
 
                 st.subheader("📊 Dados Atuais")
                 cols = st.columns(3)
