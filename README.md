@@ -43,7 +43,7 @@ Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligen
 
 O circuito de sensores foi montado utilizando o ESP32, com os seguintes componentes:
 
-<p align="center"><img src="assets/sistema-de-Irrigacao.png" alt="Circuito de sensores" border="0" width=40% height=40%></p>
+<p align="center"><img src="assets/sistema-de-Irrigacao.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
 Abaixo estão os componentes utilizados:
 - 1x ESP32
@@ -87,20 +87,60 @@ O código lê o estado de cada sensor e, caso dois ou mais estejam em condição
   ```
 
 - **Lógica de decisão para acionar a irrigação:**
-  ```cpp
-  if (condicoesCriticas >= 2 && condicoesAPI == 0) {
-    digitalWrite(RELAY_PIN, HIGH);  // Liga a bomba
-    digitalWrite(LED_PIN, HIGH);    // Liga o LED indicativo
-  } else {
-    digitalWrite(RELAY_PIN, LOW);   // Desliga a bomba
-    digitalWrite(LED_PIN, LOW);     // Desliga o LED
-  }
-  ```
+    - se 2 ou mais sensores apresentarem resultados irregulares, o relé de irrigação será acionado;
+    - se a API Meteorológica informar chuva, o relé de irrigação será desligado (independente da condição)
+    ```cpp
+    if (condicoesCriticas >= 2 && condicoesAPI == 0) {
+      digitalWrite(RELAY_PIN, HIGH);  // Liga a bomba
+      digitalWrite(LED_PIN, HIGH);    // Liga o LED indicativo
+    } else {
+      digitalWrite(RELAY_PIN, LOW);   // Desliga a bomba
+      digitalWrite(LED_PIN, LOW);     // Desliga o LED
+    }
+    ```
+
 
 - **Exemplo de condição crítica:**
-  - LDR (pH): `ldrValue > 1400`
+  - LDR (pH): `ldrValue > 7` (Foi aplicado um fator de ÷100 na saída do LDR, para simular o valor do pH que varia de 0 a 14)
   - Umidade: `umidade < 60`
   - Fósforo e Potássio: botões desligados
+
+
+- **Valores possíveis para cada sensor:**
+  - LDR (pH): `0 a 14` (condição: 0 a 7 = 1 positivo, 8 a 14 = 0 negativo)
+  - Umidade: `de 0 a 100%` (condição: 0 a 59 = 0 negativo, 60 a 100 = 1 positivo)
+  - Botão (Fósforo): `0 ou 1` (condição: 0 negativo, 1 positivo)
+  - Botão (Potássio): `0 ou 1` (condição: 0 negativo, 1 positivo)
+  - Relé (Irrigação): `0 ou 1` (consição: 0 ligado, 1 desligado)
+  - Botão (API): `0 ou 1` (previsão: 0 não vai chover, 1 vai chover)
+
+
+- **Todas as condições possíveis (API = 0):**
+  - 01 - (Fósforo = 0 / Potássio = 0 / pH = 0 / Umidade = 0) = Ligar Irrigação
+  - 02 - (Fósforo = 0 / Potássio = 0 / pH = 0 / Umidade = 1) = Ligar Irrigação
+  - 03 - (Fósforo = 0 / Potássio = 0 / pH = 1 / Umidade = 0) = Ligar Irrigação
+  - 04 - (Fósforo = 0 / Potássio = 0 / pH = 1 / Umidade = 1) = Ligar Irrigação
+  - 05 - (Fósforo = 0 / Potássio = 1 / pH = 0 / Umidade = 0) = Ligar Irrigação
+  - 06 - (Fósforo = 0 / Potássio = 1 / pH = 0 / Umidade = 1) = Ligar Irrigação
+  - 07 - (Fósforo = 0 / Potássio = 1 / pH = 1 / Umidade = 0) = Ligar Irrigação
+  - 08 - (Fósforo = 0 / Potássio = 1 / pH = 1 / Umidade = 1) = Desligar Irrigação
+  - 09 - (Fósforo = 1 / Potássio = 0 / pH = 0 / Umidade = 0) = Ligar Irrigação
+  - 10 - (Fósforo = 1 / Potássio = 0 / pH = 0 / Umidade = 1) = Ligar Irrigação
+  - 11 - (Fósforo = 1 / Potássio = 0 / pH = 1 / Umidade = 0) = Ligar Irrigação
+  - 12 - (Fósforo = 1 / Potássio = 0 / pH = 1 / Umidade = 1) = Desligar Irrigação
+  - 13 - (Fósforo = 1 / Potássio = 1 / pH = 0 / Umidade = 0) = Ligar Irrigação
+  - 14 - (Fósforo = 1 / Potássio = 1 / pH = 0 / Umidade = 1) = Desligar Irrigação
+  - 15 - (Fósforo = 1 / Potássio = 1 / pH = 1 / Umidade = 0) = Desligar Irrigação
+  - 16 - (Fósforo = 1 / Potássio = 1 / pH = 1 / Umidade = 1) = Desligar Irrigação
+
+
+### Demonstração dos resultados do circuito:
+
+* Todos o sensores do circuito apresentando resultados <u>positivos</u>:
+<p align="center"><img src="assets/irrigacao_condicao_positiva.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
+
+* Todos os sensores do circuito apresentando resultados <u>negativos</u>:
+<p align="center"><img src="assets/irrigacao_condicao_negativa.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
 ## Resumo
 
@@ -118,13 +158,14 @@ O grupo teve que fazer algumas alterações em relação ao modelo de banco de d
 
 <p align="center">
   <b>Antigo</b><br>
-  <img src="assets/mer_antigo.png" alt="MER Antigo" border="0" width=40% height=40%>
+  <img src="assets/mer_antigo.png" alt="MER Antigo" border="0" width=70% height=70%>
 </p>
 <br>
 <p align="center">
   <b>Novo</b><br>
-  <img src="assets/mer.png" alt="MER Novo" border="0" width=40% height=40%>
+  <img src="assets/mer.png" alt="MER Novo" border="0" width=70% height=70%>
 </p>
+
 
 
 Novo Modelo de Entidade-Relacionamento:
@@ -452,6 +493,16 @@ Posteriormente, o usuário deve clicar no botão "Gerar Simulação" para visual
   <img src="assets/dashboard/grafico2.PNG" alt="graficos" border="0" width=80% height=80%>
 </p>
 
+# Video demonstrando o funcionamento
+### Cap 1 - Construindo uma máquina agrícola
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=HZI6EmQK8E8">
+    <img src="https://img.youtube.com/vi/HZI6EmQK8E8/0.jpg" alt="Assista ao vídeo no YouTube" border="0" width=80% height=80%>
+  </a>
+</div>
+
+    - link do vídeo: https://www.youtube.com/watch?v=HZI6EmQK8E8
 
 ### Ir Além 2: Integração Python com API Pública
 
