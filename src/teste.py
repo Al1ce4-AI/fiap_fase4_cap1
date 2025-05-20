@@ -6,7 +6,7 @@ from src.logger.config import configurar_logger
 from datetime import datetime
 
 def main():
-    """Função principal do programa."""
+    """Função teste do programa."""
     configurar_logger()
     iniciar_database()
     Database.create_all_tables(drop_if_exists=False)

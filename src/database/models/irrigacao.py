@@ -1,10 +1,8 @@
-from sqlalchemy import Sequence, String, Text, ForeignKey, Float, DateTime
+from sqlalchemy import Sequence, Text, ForeignKey, Float, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from src.database.tipos_base.database import Database
 from src.service.get_weather import obter_dados_clima
 from src.database.models.fazenda import Plantio
-from src.database.models.unidade import Unidade
 from src.database.models.sensor import LeituraSensor, Sensor, TipoSensor
 from src.database.tipos_base.model import Model
 from datetime import datetime
@@ -98,9 +96,10 @@ class Irrigacao(Model):
                     logging.warning(f"Falha ao obter clima: {str(clima_error)}")
 
                 deve_irrigar = (
-                    umidade < 30 and
-                    not clima.get('chuva', True) and
-                    5.5 <= ph <= 7.0
+                    (umidade < 30 or
+                    5.5 <= ph <= 7.0) and
+                    not clima.get('chuva', True)
+
                 )
                 
                 return deve_irrigar, {

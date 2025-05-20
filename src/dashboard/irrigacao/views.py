@@ -30,7 +30,7 @@ def get_irrigacao_page():
                 deve_irrigar, dados = Irrigacao.decidir_irrigacao(plantio.id, cidade)
                 
                 if 'erro' in dados:
-                    st.warning(f"Aviso: {dados['erro']}")
+                    st.warning(f"Não foi possível obter os dados da api metereológica: {dados['erro']}")
 
                 st.subheader("📊 Dados Atuais")
                 cols = st.columns(3)

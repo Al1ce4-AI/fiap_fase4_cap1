@@ -144,9 +144,9 @@ O código lê o estado de cada sensor e, caso dois ou mais estejam em condição
 * Todos os sensores do circuito apresentando resultados <u>negativos</u>:
 <p align="center"><img src="assets/irrigacao_condicao_negativa.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
-## Resumo
+### Lançamento Manual dos dados do Monitor Serial no sistema em Python
 
-O sistema automatiza a irrigação com base em múltiplos fatores do solo e previsão de chuva, tornando o processo mais eficiente e inteligente.
+O lançamento dos dados do monitor serial no sistema em Python será mostrado no vídeo abaixo, após a explicação do sistema e operações CRUD.
 
 ---
 
@@ -465,6 +465,17 @@ O arquivo zip contém os arquivos no formato CSV, que podem ser importados para 
   <img src="assets/dashboard/importar_banco_de_dados/importacao_concluida.PNG" alt="salvar_db" border="0" width=80% height=80%>
 </p>
 
+# Video demonstrando o funcionamento do circuito e lançamento manual dos dados no sistema em python
+### Cap 1 - Construindo uma máquina agrícola
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=HZI6EmQK8E8">
+    <img src="https://img.youtube.com/vi/HZI6EmQK8E8/0.jpg" alt="Assista ao vídeo no YouTube" border="0" width=80% height=80%>
+  </a>
+</div>
+
+    - link do vídeo: https://www.youtube.com/watch?v=HZI6EmQK8E8
+
 ### Ir Além 1: Dashboard em Python para Visualização dos Dados
 
 O projeto inclui um dashboard desenvolvido em Python, utilizando a biblioteca Streamlit, que permite visualizar os dados armazenados no banco de dados de forma interativa e amigável. O dashboard apresenta gráficos e tabelas que facilitam a análise dos dados coletados pelos sensores.
@@ -495,18 +506,29 @@ Posteriormente, o usuário deve clicar no botão "Gerar Simulação" para visual
   <img src="assets/dashboard/grafico2.PNG" alt="graficos" border="0" width=80% height=80%>
 </p>
 
-# Video demonstrando o funcionamento
-### Cap 1 - Construindo uma máquina agrícola
+## Possíveis Erros que podem ocorrer durante a execução do sistema
 
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=HZI6EmQK8E8">
-    <img src="https://img.youtube.com/vi/HZI6EmQK8E8/0.jpg" alt="Assista ao vídeo no YouTube" border="0" width=80% height=80%>
-  </a>
-</div>
-
-    - link do vídeo: https://www.youtube.com/watch?v=HZI6EmQK8E8
+- **Erro de Conexão com o Banco de Dados [WinError 10054]**: Caso ocorra este erro, a solução é clicar em outra opção do menu para que o sistema reinicie a conexão com o banco de dados.
+<p align="center">
+  <img src="assets/dashboard/erro_conexao.JPG" alt="WinError 10054" border="0" width=80% height=80%>
+</p>
 
 ### Ir Além 2: Integração Python com API Pública
+
+Para acessar a api o usuário deverá selecionar as opções "Previsão do Tempo" ou "Irrigação" no menu principal.
+
+<p align="center">
+  <img src="assets/api_metereologica/api_metereologica.JPG" alt="apimetereologica" border="0" width=80% height=80%>
+</p>
+
+<p align="center">
+  <img src="assets/api_metereologica/previsao_do_tempo.JPG" alt="previsaodotempo" border="0" width=80% height=80%>
+</p>
+
+<p align="center">
+  <img src="assets/api_metereologica/logica_irrigacao.JPG" alt="previsaodotempo" border="0" width=80% height=80%>
+</p>
+
 
 ## Funcionamento API
 
