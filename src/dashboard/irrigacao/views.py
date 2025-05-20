@@ -56,4 +56,4 @@ def get_irrigacao_page():
                 st.error(f"Erro na análise: {str(e)}")
                 add_global_message(f"Falha na irrigação: {str(e)}")
 
-irrigacao_page = st.Page(get_irrigacao_page, title="Irrigação", url_path="irrigacao", icon="💧")
+irrigacao_page = st.Page(get_irrigacao_page, title="Irrigação", url_path="logicairrigacao", icon="💧")

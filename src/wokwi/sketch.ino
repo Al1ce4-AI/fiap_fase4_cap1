@@ -4,7 +4,7 @@
 // Cado API Meteorológica. representada pelo Botão Vermelho, informe que que haverá chuva o sistema de irrigação será interrompido
 
 // CONDIÇÃO NEGATIVA DE CADA SENSOR:
-// LDR (pH simulador): Valor > 1400, 
+// LDR (pH simulador): Valor > 7 (Aplicado um fator de divisão por 100, por pH só vai de 0 a 14 e o LDR vai de 0 a 4000), 
 // Umidade: Valor < 60% 
 // Botão Azul (Fósforo Simulado): Desligado
 // Botão Amarelo (Potássio Simulado): Desligado
@@ -56,6 +56,7 @@ void loop() {
   bool leituraFosforo = digitalRead(BUTTON_P);
   bool leituraPotassio = digitalRead(BUTTON_K);
   bool leituraAPI = digitalRead(BUTTON_API);
+  bool LedValue = digitalRead(LED_PIN);
 
   // Verifica mudança de estado do botão de fósforo
   if (leituraFosforo == LOW && ultimoEstadoFosforo == HIGH) {
@@ -93,7 +94,7 @@ void loop() {
   bool resultadoAPI = !estadoAPI;
 
   // Condição de pH ideal (simulado pelo LDR)
-  bool phIdeal = (ldrValue > 1400);
+  bool phIdeal = (ldrValue > 700);
 
   // Verifica se a umidade está abaixo do ideal (< 60%)
   bool umidadeBaixa = umidade < 60;
@@ -103,8 +104,9 @@ void loop() {
   Serial.print(" | Potássio: "); Serial.print(estadoPotassio);
   Serial.print(" | LDR (pH simulado): "); Serial.print(ldrValue / 100.0);
   Serial.print(" | Umidade: "); Serial.print(umidade); Serial.print("%");
+  Serial.print(" | relé (Irrigacao): "); Serial.print(LedValue);
   Serial.print(" | API: "); Serial.println(estadoAPI);
-
+   
   // === AÇÃO: ATIVAR BOMBA ===
 
   // Atribui 1 para a API de estiver ligada
@@ -122,11 +124,9 @@ void loop() {
   if (condicoesCriticas >= 2 && condicoesAPI == 0) {
     digitalWrite(RELAY_PIN, HIGH);  // Liga a bomba
     digitalWrite(LED_PIN, HIGH);    // Liga o LED indicativo
-    Serial.print("Estado do Rele: Ligado");
   } else {
     digitalWrite(RELAY_PIN, LOW);   // Desliga a bomba
     digitalWrite(LED_PIN, LOW);     // Desliga o LED
-    Serial.print("Estado do Rele: Desligado");
   }
 
   delay(1000);  // Espera 1 segundo antes da próxima leitura
