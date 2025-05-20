@@ -449,6 +449,8 @@ As tabelas com os dados utilizados no sistema podem ser encontradas na pasta em 
 
 O arquivo zip contém os arquivos no formato CSV, que podem ser importados para o banco de dados utilizando o dashboard, conforme passos abaixo.
 
+> **Nota:** Os dados das leituras do sensor estão datados de **15/05/2025** até **20/05/2025**.
+
 1. O usuário deve selecionar a opção "Importar Banco de Dados" no menu principal.
 <p align="center">
   <img src="assets/dashboard/importar_banco_de_dados/importar_banco_de_dados.PNG" alt="importar_db" border="0" width=80% height=80%>
@@ -586,12 +588,11 @@ Para acessar a api o usuário deverá selecionar as opções "Previsão do Tempo
 
 Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
 
-- <b>.github</b>: Nesta pasta ficarão os arquivos de configuração específicos do GitHub que ajudam a gerenciar e automatizar processos no repositório.
-- <b>assets</b>: aqui estão os arquivos relacionados a elementos não-estruturados deste repositório, como imagens.
+- <b>.streamlit</b>: Pasta que contém arquivos de configuração do Streamlit, como o tema e a barra lateral.
+- <b>assets</b>: Aqui estão os arquivos relacionados a elementos não-estruturados deste repositório, como imagens.
 - <b>src</b>: Todo o código fonte criado para o desenvolvimento do projeto ao longo de todas as fases.
   - <b>dashboard</b>: Código do dashboard desenvolvido em Python, utilizando a biblioteca Streamlit. ([dashboard](src/dashboard/))
   - <b>database</b>: Execução dos comandos de banco de dados, como Conectar, Cadastrar, Listar, Editar e Excluir.
-  - <b>irrigacao</b>: Código responsável por controlar a irrigação, acionando o relé da bomba de irrigação e o LED indicativo.
   - <b>logger</b>: Código responsável por registrar as operações realizadas no banco de dados, como inserções, atualizações e exclusões.
   - <b>service</b>: Conexão com a api pública de previsão do tempo, responsável por coletar dados meteorológicos.
   - <b>wokwi</b>: Código do ESP32, responsável por monitorar a necessidade de irrigação em uma plantação, simulando sensores de nutrientes e condições ambientais.
@@ -600,6 +601,7 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
 
 ## 🗃 Histórico de lançamentos
 
+* 0.1.2 - 20/05/2025  - Atualizações finais no readme e correção de bugs
 * 0.1.1 - 18/05/2025  - Atualizações do readme, melhorias no código e correção de bugs
 * 0.1.0 - 16/05/2025  - Versão preliminar da nossa aplicação
 
