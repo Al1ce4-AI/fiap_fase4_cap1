@@ -32,7 +32,7 @@
       "id": "dht1",
       "top": 67.5,
       "left": -82.2,
-      "attrs": { "humidity": "20", "temperature": "61.5" }
+      "attrs": { "humidity": "63.5", "temperature": "61.5" }
     },
     { "type": "wokwi-led", "id": "led1", "top": 150, "left": 167, "attrs": { "color": "red" } },
     {
