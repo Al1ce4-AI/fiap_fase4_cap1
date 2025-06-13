@@ -1,12 +1,8 @@
 import streamlit as st
-from enum import Enum
-from src.dashboard.plots.generic.grafico_barras import get_grafico_barras
-from src.dashboard.plots.generic.grafico_degrau import get_grafico_degrau
-from src.dashboard.plots.generic.grafico_linha import get_grafico_linha
 from src.dashboard.plots.generic.utils import get_sensores_por_tipo, get_leituras_for_sensor
 from src.dashboard.plots.todas_leituras.plot_todas_leituras_linha import get_grafico_linha_todas_leituras
-from src.database.generator.criar_dados_leitura import criar_dados_litura_para_sensor
-from src.database.models.sensor import TipoSensorEnum, LeituraSensor, Sensor
+from src.database.generator.criar_dados_leitura import criar_dados_leitura
+from src.database.models.sensor import TipoSensorEnum
 from datetime import datetime, timedelta
 
 
@@ -68,40 +64,40 @@ class PlotAllView:
             sensor_fosforo = sensores_selecionados[TipoSensorEnum.FOSFORO.value]
             sensor_potassio = sensores_selecionados[TipoSensorEnum.POTASSIO.value]
 
-            leituras_umidade = criar_dados_litura_para_sensor(
+            leituras_umidade = criar_dados_leitura(
                 data_inicial=data_inicial,
                 data_final=data_final,
                 sensor_id=sensor_umidade.id,
                 total_leituras=20,
-                tipo_sensor=TipoSensorEnum.UMIDADE
+                tipo=TipoSensorEnum.UMIDADE.get_type_for_generation()
             )
-            leituras_rele = criar_dados_litura_para_sensor(
+            leituras_rele = criar_dados_leitura(
                 data_inicial=data_inicial,
                 data_final=data_final,
                 sensor_id=sensor_rele.id,
                 total_leituras=20,
-                tipo_sensor=TipoSensorEnum.RELE
+                tipo=TipoSensorEnum.RELE.get_type_for_generation()
             )
-            leituras_ph = criar_dados_litura_para_sensor(
+            leituras_ph = criar_dados_leitura(
                 data_inicial=data_inicial,
                 data_final=data_final,
                 sensor_id=sensor_ph.id,
                 total_leituras=20,
-                tipo_sensor=TipoSensorEnum.PH
+                tipo=TipoSensorEnum.PH.get_type_for_generation()
             )
-            leituras_fosforo = criar_dados_litura_para_sensor(
+            leituras_fosforo = criar_dados_leitura(
                 data_inicial=data_inicial,
                 data_final=data_final,
                 sensor_id=sensor_fosforo.id,
                 total_leituras=20,
-                tipo_sensor=TipoSensorEnum.FOSFORO
+                tipo=TipoSensorEnum.FOSFORO.get_type_for_generation()
             )
-            leituras_potassio = criar_dados_litura_para_sensor(
+            leituras_potassio = criar_dados_leitura(
                 data_inicial=data_inicial,
                 data_final=data_final,
                 sensor_id=sensor_potassio.id,
                 total_leituras=20,
-                tipo_sensor=TipoSensorEnum.POTASSIO
+                tipo=TipoSensorEnum.POTASSIO.get_type_for_generation()
             )
 
             get_grafico_linha_todas_leituras(

@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import List
+from typing import List, Union, Any
 from sqlalchemy import Sequence, String, Text, ForeignKey, Float, DateTime, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database.models.fazenda import Plantio
@@ -29,6 +29,42 @@ class TipoSensorEnum(StrEnum):
             return "Estado do Relé"
 
         return super().name
+
+    def get_type_for_generation(self) -> Union[type[float], type[int], type[bool]]:
+
+        match self:
+            case TipoSensorEnum.FOSFORO:
+                return bool
+            case TipoSensorEnum.POTASSIO:
+                return bool
+            case TipoSensorEnum.PH:
+                return float
+            case TipoSensorEnum.UMIDADE:
+                return float
+            case TipoSensorEnum.RELE:
+                return bool
+
+        return float
+
+
+
+    def get_range_for_generation(self) -> Union[tuple[float, float], None]:
+        match self:
+            case TipoSensorEnum.PH:
+                return 0.0 , 14.0
+            case TipoSensorEnum.UMIDADE:
+                return 0.0 , 100.0
+
+        return 0, 100.0
+
+    def get_valor_escalado(self, valor) -> Any:
+        """
+        Retorna o valor escalado de acordo com o tipo do sensor.
+        :param valor: Valor a ser escalado.
+        :return: Valor escalado.
+        """
+
+        return valor
 
 
 class TipoSensor(Model):

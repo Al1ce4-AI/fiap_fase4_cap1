@@ -4,7 +4,7 @@ from src.dashboard.plots.generic.grafico_barras import get_grafico_barras
 from src.dashboard.plots.generic.grafico_degrau import get_grafico_degrau
 from src.dashboard.plots.generic.grafico_linha import get_grafico_linha
 from src.dashboard.plots.generic.utils import get_sensores_por_tipo, get_leituras_for_sensor
-from src.database.generator.criar_dados_leitura import criar_dados_litura_para_sensor
+from src.database.generator.criar_dados_leitura import criar_dados_leitura
 from src.database.models.sensor import TipoSensorEnum, LeituraSensor, Sensor
 from datetime import datetime, timedelta
 
@@ -73,12 +73,12 @@ class PlotView:
             st.warning("Selecione um sensor e as datas para gerar o gráfico.")
 
         elif simulacao:
-            leituras = criar_dados_litura_para_sensor(
+            leituras = criar_dados_leitura(
                 data_inicial=data_inicial,
                 data_final=data_final,
                 sensor_id=sensor_selecionado.id,
                 total_leituras=20,
-                tipo_sensor=self.tipo_sensor
+                tipo=self.tipo_sensor.get_type_for_generation()
             )
 
             self.get_grafico(sensor_selecionado, leituras,

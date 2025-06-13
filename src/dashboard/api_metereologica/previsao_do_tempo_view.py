@@ -1,14 +1,6 @@
 import logging
 
 import streamlit as st
-from enum import Enum
-from src.dashboard.plots.generic.grafico_barras import get_grafico_barras
-from src.dashboard.plots.generic.grafico_degrau import get_grafico_degrau
-from src.dashboard.plots.generic.grafico_linha import get_grafico_linha
-from src.dashboard.plots.generic.utils import get_sensores_por_tipo, get_leituras_for_sensor
-from src.database.generator.criar_dados_leitura import criar_dados_litura_para_sensor
-from src.database.models.sensor import TipoSensorEnum, LeituraSensor, Sensor
-from datetime import datetime, timedelta
 
 from src.service.get_weather import obter_dados_clima
 
