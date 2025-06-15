@@ -1,10 +1,6 @@
-from src.database.generator.criar_dados_leitura import criar_dados_leitura
 from src.database.generator.gerar_sensores_e_dados import criar_dados_sample
-from src.database.login.iniciar_database import iniciar_database
 from src.database.models.sensor import LeituraSensor, Sensor
-from src.database.reset_contador_ids import reset_contador_ids, get_sequences_from_db
 from src.database.tipos_base.database import Database
-from src.logger.config import configurar_logger
 from datetime import datetime, timedelta
 import pandas as pd
 
