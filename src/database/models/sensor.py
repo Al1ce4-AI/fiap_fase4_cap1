@@ -7,6 +7,7 @@ from src.database.models.unidade import Unidade
 from src.database.tipos_base.database import Database
 from src.database.tipos_base.model import Model
 from datetime import datetime, date, time, timedelta
+import pandas as pd
 
 class TipoSensorEnum(StrEnum):
     FOSFORO = "P"
@@ -300,3 +301,35 @@ class LeituraSensor(Model):
             ).order_by(LeituraSensor.data_leitura).all()
 
             return leituras
+
+    @classmethod
+    def get_dataset_for_machine_learning(cls, sensor_ids:List[int], data_inicial: date, data_final: date):
+        """
+        Obtém um dataset de leituras de sensor para machine learning.
+        :param sensor_ids: IDs do sensor.
+        :param data_inicial: Data inicial do intervalo.
+        :param data_final: Data final do intervalo.
+        :return: Lista de dicionários com os dados de leitura.
+        """
+
+        df = pd.DataFrame()
+
+        for sensor_id in sensor_ids:
+            sensor = Sensor.get_from_id(sensor_id)
+            leituras = cls.get_leituras_for_sensor(sensor_id, data_inicial, data_final)
+            if not leituras:
+                continue
+
+            df_sensor = pd.DataFrame([{
+                'data_leitura': leitura.data_leitura,
+                'valor': leitura.valor
+            } for leitura in leituras])
+
+            df_sensor.set_index('data_leitura', inplace=True)
+            df_sensor.sort_index(inplace=True)
+
+            df = pd.concat([df, df_sensor], axis=1)
+            #renomear a coluna do novo sensor para o nome do sensor
+            df.rename(columns={'valor': f'sensor_{sensor_id}_{sensor.nome}'}, inplace=True)
+
+        return df
