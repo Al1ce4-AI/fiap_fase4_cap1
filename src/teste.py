@@ -65,6 +65,9 @@ def teste():
 
     print(df_ml)
 
+    print("Salvando o dataset para machine learning.")
+    df_ml.to_csv("../assets/dataset_ml.csv", index=True)
+
 
 if __name__ == "__main__":
     gerar_mer_e_ddl()
