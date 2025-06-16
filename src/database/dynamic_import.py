@@ -14,10 +14,6 @@ def import_models(sort:bool=False) -> dict[str, type[Model]]:
     models = {}
     models_path = os.path.join(os.path.dirname(__file__), "models")
 
-
-
-    print(os.listdir(models_path))
-
     for file in os.listdir(models_path):
         if file.endswith(".py") and file != "__init__.py":
             # Remove o caminho do arquivo e substitui por um ponto
