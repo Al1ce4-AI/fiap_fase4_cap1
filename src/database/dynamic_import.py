@@ -1,8 +1,7 @@
 import importlib
 import inspect
-import logging
 import os
-
+import logging
 from src.database.tipos_base.model import Model
 
 
@@ -15,9 +14,12 @@ def import_models(sort:bool=False) -> dict[str, type[Model]]:
     models = {}
     models_path = os.path.join(os.path.dirname(__file__), "models")
 
+
+
+    print(os.listdir(models_path))
+
     for file in os.listdir(models_path):
         if file.endswith(".py") and file != "__init__.py":
-
             # Remove o caminho do arquivo e substitui por um ponto
             # para formar o nome do módulo
             # Exemplo: src/database/models/modelo.py -> src.database.models.modelo
@@ -27,14 +29,22 @@ def import_models(sort:bool=False) -> dict[str, type[Model]]:
             src_path = src_path[src_path.index('src'):]
             src_path = '.'.join(src_path)
             module_name = f"{src_path}.{file[:-3]}"
-            # logging.debug(f"Importando módulo: {module_name}")
-
             module = importlib.import_module(module_name)
 
             for name, obj in inspect.getmembers(module, inspect.isclass):
+                if obj.__module__ != module_name:
+                    continue
+
                 if issubclass(obj, Model) and obj is not Model:
-                    # logging.debug(f"Encontrada classe modelo: {name}")
                     models[name] = obj
+                else:
+
+                    for base in obj.__bases__:
+                        if base.__name__ == Model.__name__:
+                            if base.__module__ == Model.__module__:
+                                logging.debug(f"Encontrada classe modelo: {name} (base: {base.__name__})")
+                                models[name] = obj
+                                break
 
     if sort:
         models = dict(sorted(models.items(), key=lambda item: item[1].__database_import_order__))

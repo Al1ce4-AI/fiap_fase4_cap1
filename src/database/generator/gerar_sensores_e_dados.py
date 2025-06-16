@@ -1,5 +1,4 @@
 from datetime import datetime
-from src.database.generator.criar_dados_leitura import criar_dados_leitura
 from src.database.generator.criar_sensores import criar_sensores_padrao
 from src.database.models.sensor import LeituraSensor, TipoSensorEnum, Sensor, TipoSensor
 
@@ -25,14 +24,12 @@ def criar_dados_sample(
 
         tipo = TipoSensor.get_from_id(sensor.tipo_sensor_id)
 
-        leituras = criar_dados_leitura(
+        leituras = LeituraSensor.criar_dados_leitura(
             data_inicial=data_inicial,
             data_final=data_final,
             sensor_id=sensor.id,
             total_leituras=total_leituras,
-            tipo=tipo.tipo.get_type_for_generation(),
-            minimo=None if tipo.tipo.get_range_for_generation() is None else tipo.tipo.get_range_for_generation()[0],
-            maximo=None if tipo.tipo.get_range_for_generation() is None else tipo.tipo.get_range_for_generation()[1]
+            tipo=tipo.tipo,
         )
         retorno.append((sensor, leituras))
 

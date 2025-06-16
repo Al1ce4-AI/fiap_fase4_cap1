@@ -7,7 +7,10 @@ from src.database.models.unidade import Unidade
 from src.database.tipos_base.database import Database
 from src.database.tipos_base.model import Model
 from datetime import datetime, date, time, timedelta
+from typing import Self, Optional
 import pandas as pd
+from random import choice, randrange
+import numpy as np
 
 class TipoSensorEnum(StrEnum):
     FOSFORO = "P"
@@ -333,3 +336,50 @@ class LeituraSensor(Model):
             df.rename(columns={'valor': f'sensor_{sensor_id}_{sensor.nome}'}, inplace=True)
 
         return df
+
+    @classmethod
+    def criar_dados_leitura(
+            cls,
+            data_inicial: datetime,
+            data_final: datetime,
+            sensor_id: int,
+            total_leituras: int,
+            tipo: TipoSensorEnum,
+    ) -> list[Self]:
+        """
+        Cria dados de leitura um sensor específico em um intervalo de datas.
+
+        Args:
+            data_inicial (datetime): Data inicial do intervalo.
+            data_final (datetime): Data final do intervalo.
+            sensor_id (int): ID do sensor.
+            total_leituras (int): Total de leituras a serem geradas.
+            tipo (TipoSensorEnum): Tipo de dado a ser gerado.
+
+        Returns:
+            list: Lista de dicionários com os dados de leitura gerados.
+        """
+
+        assert (data_inicial < data_final), "A data inicial deve ser anterior à data final."
+        leituras = []
+
+        for i in range(total_leituras):
+            data_leitura = data_inicial + (data_final - data_inicial) * (i / total_leituras)
+            if tipo.get_type_for_generation() == bool:
+                valor = choice([0, 1])
+            elif tipo.get_type_for_generation() == int:
+                valor = randrange(*tipo.get_range_for_generation())
+            elif tipo.get_type_for_generation() == float:
+                valor = np.random.uniform(*tipo.get_range_for_generation())
+            else:
+                raise ValueError(f"Tipo {tipo.get_type_for_generation()} inválido. Deve ser 'bool' ou 'range'.")
+            leituras.append(LeituraSensor(
+                sensor_id=sensor_id,
+                data_leitura=data_leitura,
+                valor=valor
+            ))
+
+        print(f"Geradas {len(leituras)} leituras para o sensor {sensor_id} entre {data_inicial} e {data_final}.")
+
+        return leituras
+
