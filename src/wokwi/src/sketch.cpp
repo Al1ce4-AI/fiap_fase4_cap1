@@ -32,6 +32,87 @@ uint8_t ultimoEstadoAPI = HIGH;
 void atualizarLCD(float& umidade, float& ph, uint8_t& irrigStatus);
 void logSerial(float& umidade, float& ph, uint8_t& irrigStatus);
 
+
+void print_lcd_and_serial(const String& message) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(message);
+  Serial.println(message);
+}
+
+// === CONFIGURAÇÃO DE REDE E API ===
+const char* ssid = NETWORK_SSID;
+const char* password = NETWORK_PASSWORD;
+const int canal_wifi = 6; // Canal do WiFi (no uso real, deixar automático)
+const char* endpoint_api = API_URL; // URL da API
+const String init_sensor = String(endpoint_api) + "/init/";     // Endpoint de inicialização
+const String post_sensor = String(endpoint_api) + "/leitura/";  // Endpoint de envio de dados
+
+// === FUNÇÃO DE CONEXÃO WI-FI ===
+void conectaWiFi() {
+  WiFi.begin(ssid, password, canal_wifi);
+  print_lcd_and_serial("Conectando ao WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  print_lcd_and_serial("WiFi conectado!");
+}
+
+// === FUNÇÃO DE ENVIO DE DADOS PARA API ===
+int post_data(JsonDocument& doc, const String& endpoint_api) {
+  Serial.println("Enviando dados para a API: " + endpoint_api);
+
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(endpoint_api);
+
+    String jsonStr;
+    serializeJson(doc, jsonStr);
+    int httpCode = http.POST(jsonStr);
+
+    if (httpCode > 0) {
+      Serial.println("Status code: " + String(httpCode));
+      String payload = http.getString();
+      Serial.println(payload);
+    } else {
+      Serial.println("Erro na requisição");
+    }
+    http.end();
+    return httpCode;
+  } else {
+    Serial.println("WiFi desconectado, impossível fazer requisição!");
+  }
+
+  return -1; // Retorna -1 se não conseguiu enviar os dados
+
+}
+
+// === IDENTIFICAÇÃO DO DISPOSITIVO ===
+char chipidStr[17];
+bool iniciou_sensor = false;
+
+void iniciar_sensor() {
+  uint64_t chipid = ESP.getEfuseMac();
+  sprintf(chipidStr, "%016llX", chipid);
+  print_lcd_and_serial("Chip ID: " + String(chipidStr));
+
+  JsonDocument doc;
+  doc["serial"] = chipidStr; // Adiciona o Chip ID ao JSON
+  int httpcode = post_data(doc, init_sensor); // Envia o Chip ID para a API
+
+  if (httpcode >= 200 && httpcode < 300) {
+    print_lcd_and_serial("Sensor iniciado com sucesso!");
+    delay(1000); // delay para garantir que a mensagem seja visível
+    iniciou_sensor = true;
+  } else {
+    print_lcd_and_serial(String("Falha ao iniciar o sensor na API: ") + String(httpcode));
+    delay(1000); // delay para garantir que a mensagem seja visível
+  }
+}
+
+
+
 void setup() {
   // Serial otimizada (115200 é padrão para ESP32)
   Serial.begin(115200);
@@ -59,6 +140,10 @@ void setup() {
   }
 
   dht.begin();
+
+  
+  conectaWiFi();
+
 }
 
 // ===== FUNÇÕES AUXILIARES =====
@@ -99,6 +184,16 @@ void logSerial(float& umidade, float& ph, uint8_t& irrigStatus) {
 
 
 void loop() {
+
+  if (!iniciou_sensor) {
+    iniciar_sensor();
+  }
+
+  
+  JsonDocument doc;
+  doc["serial"] = chipidStr; // Adiciona o Chip ID ao JSON
+
+
   // === LEITURA DE BOTÕES (OTIMIZADA) ===
   uint8_t leituraAtual;
   
@@ -142,6 +237,25 @@ void loop() {
   // === ATUALIZAÇÕES DE SAÍDA ===
   atualizarLCD(umidade, phSimulado, irrigacaoAtiva);
   logSerial(umidade, phSimulado, irrigacaoAtiva);
+
+  doc["umidade"] = umidade;  // Adiciona umidade ao JSON
+  doc["ph"] = phSimulado;     // Adiciona pH simulado
+  doc["estado_fosforo"] = estadoFosforo;  // Adiciona estado do fósforo
+  doc["estado_potassio"] = estadoPotassio; // Adiciona estado do potássio
+  doc["estado_api"] = estadoAPI; // Adiciona estado da API
+  doc["estado_irrigacao"] = irrigacaoAtiva; // Adiciona estado da irrigação
+
+  
+
+  if (iniciou_sensor) {
+    // Envia os dados para a API
+    int httpcode = post_data(doc, post_sensor);
+    if (httpcode >= 200 && httpcode < 300) {
+      Serial.println("Dados enviados com sucesso!");
+    } else {
+      Serial.println("Falha ao enviar dados.");
+    }
+  }
 
   // Delay otimizado (poderia usar millis() para não-blocking)
   delay(800);  // Reduzido de 1000ms
