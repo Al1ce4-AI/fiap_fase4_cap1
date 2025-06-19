@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from src.settings import DEBUG
 from src.wokwi_api.init_sensor import init_router
+from src.wokwi_api.prever_irrigacao import irrigar_router
 from src.wokwi_api.receber_leitura import receber_router
 import uvicorn
 import threading
@@ -9,6 +10,7 @@ import threading
 app = FastAPI()
 app.include_router(init_router, prefix='/init')
 app.include_router(receber_router, prefix='/leitura')
+app.include_router(irrigar_router, prefix='/irrigacao')
 
 def _print_routes(app):
     for route in app.routes:

@@ -1,18 +1,21 @@
 from src.database.models.fazenda import Plantio, Propriedade, Campo
 from src.database.tipos_base.database import Database
 from src.database.models.sensor import Sensor
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import APIRouter
 
 from src.modelo_preditivo.realizar_previsao_func import realizar_previsao_modelo_padrao
 from src.service.get_weather import obter_dados_clima
 from src.wokwi_api.base.leitura_request import LeituraRequest
 
-receber_router = APIRouter()
+irrigar_router = APIRouter()
 
 CIDADE_PADRAO = "São Paulo"
 
-@receber_router.post("/")
+dados_ultima_leitura = None
+data_ultima_leitura:datetime or None = None
+
+@irrigar_router.post("/")
 def prever_irrigacao(request: LeituraRequest):
 
     now = datetime.now()
@@ -39,9 +42,15 @@ def prever_irrigacao(request: LeituraRequest):
                     cidade = propriedade.cidade
                     break
 
-    dados_climaticos = obter_dados_clima(cidade)
+    dados_climaticos = dados_ultima_leitura
+
+    if dados_climaticos is not None and data_ultima_leitura is not None and (now - data_ultima_leitura) < timedelta(days=1):
+        print("Usando dados da última leitura")
+    else:
+        dados_climaticos = obter_dados_clima(cidade)
 
     if dados_climaticos['chuva']:
+        print("Chuva detectada, não irrigar")
         return {
             "status": "success",
             "irrigar": False,
@@ -56,11 +65,13 @@ def prever_irrigacao(request: LeituraRequest):
     )
 
     if irrigar == "Sim":
+        print("Irrigar")
         return  {
             "status": "success",
             "irrigar": True,
         }
     else:
+        print("Não irrigar")
         return {
             "status": "success",
             "irrigar": False,

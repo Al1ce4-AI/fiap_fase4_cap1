@@ -2,6 +2,7 @@ import joblib
 import pandas as pd
 from typing import Literal
 from datetime import datetime
+import os
 
 def converte_data_leitura(hora_leitura: datetime) -> float:
 
@@ -77,8 +78,12 @@ def realizar_previsao_modelo_padrao(
     :param ph: Estado do pH (0 ou 1).
     :param umidade: Umidade do solo.
     """
+
+    caminho = os.path.dirname(os.path.abspath(__file__))
+    caminho = os.path.join(caminho, 'modelos_otimizados_salvos', 'SVMrbf.pkl')
+
     return carregar_modelo_e_realizar_previsao(
-        path_arquivo=r"modelos_otimizados_salvos\SVMrbf.pkl",
+        path_arquivo=caminho,
         hora_leitura=hora_leitura,
         fosforo=fosforo,
         potassio=potassio,
