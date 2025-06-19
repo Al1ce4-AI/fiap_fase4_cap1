@@ -1,5 +1,9 @@
+#include <Arduino.h>
+#include <Wire.h>
 #include <DHT.h>
 #include <LiquidCrystal_I2C.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 // ===== DEFINIÇÕES OTIMIZADAS =====
 #define BUTTON_P        5     // Botão fósforo (GPIO5)
@@ -25,8 +29,8 @@ uint8_t ultimoEstadoPotassio = HIGH;
 uint8_t ultimoEstadoAPI = HIGH;
 
 // ===== PROTÓTIPOS DE FUNÇÃO =====
-void atualizarLCD(float umidade, float ph, uint8_t irrigStatus);
-void logSerial(float umidade, float ph, uint8_t irrigStatus);
+void atualizarLCD(float& umidade, float& ph, uint8_t& irrigStatus);
+void logSerial(float& umidade, float& ph, uint8_t& irrigStatus);
 
 void setup() {
   // Serial otimizada (115200 é padrão para ESP32)
@@ -57,6 +61,43 @@ void setup() {
   dht.begin();
 }
 
+// ===== FUNÇÕES AUXILIARES =====
+void atualizarLCD(float& umidade, float& ph, uint8_t& irrigStatus) {
+  lcd.clear();
+  
+  // Linha 1 - Dados principais (otimizado para 16 caracteres)
+  lcd.setCursor(0, 0);
+  lcd.print(F("U:")); 
+  lcd.print(umidade, 1);
+  lcd.print(F("% pH:"));
+  lcd.print(ph, 1);
+
+  // Linha 2 - Estados (usando símbolos para economizar espaço)
+  lcd.setCursor(0, 1);
+  lcd.print(F("F:")); 
+  lcd.print(estadoFosforo ? F("Y") : F("N"));  // Y/N em vez de ON/OFF
+  lcd.print(F(" K:"));
+  lcd.print(estadoPotassio ? F("Y") : F("N"));
+  lcd.print(F(" I:"));
+  lcd.print(irrigStatus ? F("ON") : F("--"));
+}
+
+void logSerial(float& umidade, float& ph, uint8_t& irrigStatus) {
+
+  // Buffer estático para evitar alocações dinâmicas
+  static char buffer[80];
+  
+  snprintf(buffer, sizeof(buffer),
+    "F:%d | K:%d | pH:%.1f | U:%.1f%% | I:%s | API:%s",
+    estadoFosforo, estadoPotassio, ph, umidade,
+    irrigStatus ? "ON" : "OFF",
+    estadoAPI ? "RAIN" : "SUN"
+  );
+  
+  Serial.println(buffer);
+}
+
+
 void loop() {
   // === LEITURA DE BOTÕES (OTIMIZADA) ===
   uint8_t leituraAtual;
@@ -85,7 +126,7 @@ void loop() {
   // === LEITURA DE SENSORES ===
   uint16_t ldrValue = analogRead(LDR_PIN);  // uint16_t para valores 0-4095
   float umidade = dht.readHumidity();
-  float phSimulado = ldrValue / 100.0f;     // 'f' para float literal
+  float phSimulado = (ldrValue / 4095.0f) * 14.0f;     // 'f' para float literal
 
   // === CÁLCULOS OTIMIZADOS ===
   uint8_t condicoesCriticas = 0;
@@ -104,39 +145,4 @@ void loop() {
 
   // Delay otimizado (poderia usar millis() para não-blocking)
   delay(800);  // Reduzido de 1000ms
-}
-
-// ===== FUNÇÕES AUXILIARES =====
-void atualizarLCD(float umidade, float ph, uint8_t irrigStatus) {
-  lcd.clear();
-  
-  // Linha 1 - Dados principais (otimizado para 16 caracteres)
-  lcd.setCursor(0, 0);
-  lcd.print(F("U:")); 
-  lcd.print(umidade, 1);
-  lcd.print(F("% pH:"));
-  lcd.print(ph, 1);
-
-  // Linha 2 - Estados (usando símbolos para economizar espaço)
-  lcd.setCursor(0, 1);
-  lcd.print(F("F:")); 
-  lcd.print(estadoFosforo ? F("Y") : F("N"));  // Y/N em vez de ON/OFF
-  lcd.print(F(" K:"));
-  lcd.print(estadoPotassio ? F("Y") : F("N"));
-  lcd.print(F(" I:"));
-  lcd.print(irrigStatus ? F("ON") : F("--"));
-}
-
-void logSerial(float umidade, float ph, uint8_t irrigStatus) {
-  // Buffer estático para evitar alocações dinâmicas
-  static char buffer[80];
-  
-  snprintf(buffer, sizeof(buffer),
-    "F:%d | K:%d | pH:%.1f | U:%.1f%% | I:%s | API:%s",
-    estadoFosforo, estadoPotassio, ph, umidade,
-    irrigStatus ? "ON" : "OFF",
-    estadoAPI ? "RAIN" : "SUN"
-  );
-  
-  Serial.println(buffer);
 }
