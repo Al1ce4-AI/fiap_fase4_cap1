@@ -34,6 +34,15 @@ class Propriedade(Model):
         }
     )
 
+    cidade: Mapped[str] = mapped_column(
+        String(255),
+        nullable=True,
+        unique=False,
+        info={
+            'label': 'Cidade'
+        }
+    )
+
     campos = relationship('Campo', back_populates='propriedade')
 
     def __str__(self):

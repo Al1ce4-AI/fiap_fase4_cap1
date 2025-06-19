@@ -46,10 +46,13 @@ def obter_dados_clima(cidade, api_key="de1bb26d32dfb587a64ca1c564b22d8a", tentat
 
 
 if __name__ == "__main__":
+    from pprint import pprint
     API_KEY = "de1bb26d32dfb587a64ca1c564b22d8a"
     CIDADE = "São Paulo"
 
     clima = obter_dados_clima(CIDADE, API_KEY)
+
+    pprint(clima)
 
     if clima:
         print("\nDados Climáticos Atuais:")

@@ -4,6 +4,7 @@ from typing import Literal
 from datetime import datetime
 
 def converte_data_leitura(hora_leitura: datetime) -> float:
+
     return  hora_leitura.hour * 60 + hora_leitura.minute + hora_leitura.second / 60 + hora_leitura.microsecond / 60_000_000
 
 
@@ -59,6 +60,32 @@ def carregar_modelo_e_realizar_previsao(path_arquivo: str, *,
     previsao_texto = le.inverse_transform(previsao)
 
     return previsao_texto[0]
+
+def realizar_previsao_modelo_padrao(
+        hora_leitura: datetime,
+        fosforo: int,
+        potassio: int,
+        ph: int,
+        umidade: float
+) -> Literal["Não", "Sim"]:
+    """
+    Realiza a previsão usando o modelo padrão.
+
+    :param hora_leitura: Hora da leitura do sensor.
+    :param fosforo: Estado do fósforo (0 ou 1).
+    :param potassio: Estado do potássio (0 ou 1).
+    :param ph: Estado do pH (0 ou 1).
+    :param umidade: Umidade do solo.
+    """
+    return carregar_modelo_e_realizar_previsao(
+        path_arquivo=r"modelos_otimizados_salvos\SVMrbf.pkl",
+        hora_leitura=hora_leitura,
+        fosforo=fosforo,
+        potassio=potassio,
+        ph=ph,
+        umidade=umidade
+    )
+
 
 if __name__ == "__main__":
     # modelo_load = joblib.load(r"E:\PythonProject\fiap_fase4_cap1\src\modelo_preditivo\modelos_otimizados_salvos\ExtraTrees100.pkl")

@@ -1,21 +1,11 @@
-from pydantic import BaseModel
 from src.database.tipos_base.database import Database
 from src.database.models.sensor import Sensor, TipoSensor, TipoSensorEnum, LeituraSensor
 from datetime import datetime
 from fastapi import APIRouter
 
+from src.wokwi_api.base.leitura_request import LeituraRequest
+
 receber_router = APIRouter()
-
-
-class LeituraRequest(BaseModel):
-    serial: str
-    umidade: float or None
-    ph: float or None
-    estado_fosforo: int or None
-    estado_potassio: int or None
-    estado_api: int or None # não utilizado
-    estado_irrigacao: int or None
-
 
 @receber_router.post("/")
 def receber_leitura(request: LeituraRequest):
