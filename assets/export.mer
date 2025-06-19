@@ -1,0 +1,76 @@
+
+Modelo de Entidade-Relacionamento:
+
+Tabela: CULTURA
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(255) NOT NULL)
+  - observacao (TEXT(1000))
+
+Tabela: PROPRIEDADE
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(100) NOT NULL)
+  - cnpj (VARCHAR(14))
+
+Tabela: CAMPO
+  - id (INTEGER NOT NULL) [PK]
+  - propriedade_id (INTEGER NOT NULL) [FK -> PROPRIEDADE]
+  - identificador (VARCHAR(100) NOT NULL)
+  - area_ha (FLOAT NOT NULL)
+
+Tabela: PLANTIO
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(100) NOT NULL)
+  - campo_id (INTEGER NOT NULL) [FK -> CAMPO]
+  - tipo_cultura (INTEGER NOT NULL) [FK -> CULTURA]
+  - data_inicio (DATETIME NOT NULL)
+  - data_fim (DATETIME)
+  - observacao (TEXT(1000))
+
+Tabela: UNIDADE
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(50) NOT NULL)
+  - multiplicador (FLOAT NOT NULL)
+
+Tabela: TIPO_SENSOR
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(255) NOT NULL)
+  - tipo (VARCHAR(15) NOT NULL)
+
+Tabela: SENSOR
+  - id (INTEGER NOT NULL) [PK]
+  - tipo_sensor_id (INTEGER NOT NULL) [FK -> TIPO_SENSOR]
+  - plantio_id (INTEGER) [FK -> PLANTIO]
+  - nome (VARCHAR(255) NOT NULL)
+  - descricao (VARCHAR(255))
+  - data_instalacao (DATETIME)
+  - unidade_id (INTEGER) [FK -> UNIDADE]
+  - latitude (FLOAT)
+  - longitude (FLOAT)
+
+Tabela: LEITURA_SENSOR
+  - id (INTEGER NOT NULL) [PK]
+  - sensor_id (INTEGER NOT NULL) [FK -> SENSOR]
+  - data_leitura (DATETIME NOT NULL)
+  - valor (FLOAT NOT NULL)
+
+Tabela: IRRIGACAO
+  - id (INTEGER NOT NULL) [PK]
+  - quantidade_total (FLOAT NOT NULL)
+  - data_hora (DATETIME NOT NULL)
+  - observacao (TEXT(1000))
+  - sensor_id (INTEGER NOT NULL) [FK -> SENSOR]
+
+Tabela: NUTRIENTE
+  - id (INTEGER NOT NULL) [PK]
+  - nome (VARCHAR(255) NOT NULL)
+  - observacao (TEXT(1000))
+
+Tabela: APLICACAO_NUTRIENTE
+  - id (INTEGER NOT NULL) [PK]
+  - plantio_id (INTEGER NOT NULL) [FK -> PLANTIO]
+  - nutriente_id (INTEGER NOT NULL) [FK -> NUTRIENTE]
+  - unidade_id (INTEGER NOT NULL) [FK -> UNIDADE]
+  - data_aplicacao (DATETIME NOT NULL)
+  - quantidade (FLOAT NOT NULL)
+  - observacao (TEXT(1000))
+
