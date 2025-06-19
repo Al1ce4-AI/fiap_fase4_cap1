@@ -91,6 +91,10 @@ def get_grafico_linha_todas_leituras(
     # Exibe o gráfico no Streamlit
     plt.tight_layout()
 
-    st.pyplot(fig)
+
+    col1, col2, col3 = st.columns([3, 7, 3])
+
+    with col2:
+        st.pyplot(fig)
 
     st.write(df)

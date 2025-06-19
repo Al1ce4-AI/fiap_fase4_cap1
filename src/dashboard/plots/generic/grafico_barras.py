@@ -27,7 +27,11 @@ def get_grafico_barras(leituras: list[LeituraSensor], title: str):
     date_format = mdates.DateFormatter('%H:%M %d/%m/%Y')
     ax.xaxis.set_major_formatter(date_format)
     plt.xticks(rotation=45)
-    st.pyplot(fig)
+
+    col1, col2, col3 = st.columns([3, 7, 3])
+
+    with col2:
+        st.pyplot(fig)
 
     #tabela com os dados
     st.write(df)

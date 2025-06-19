@@ -31,7 +31,11 @@ def get_grafico_degrau(leituras, title: str, labels: list = None):
     plt.xticks(rotation=45)
 
     # Exibe o gráfico no Streamlit
-    st.pyplot(fig)
+    col1, col2, col3 = st.columns([3, 7, 3])
+
+    with col2:
+        st.pyplot(fig)
+
 
     # Tabela com os dados
     st.write(df)

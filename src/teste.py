@@ -53,16 +53,16 @@ def teste():
 
     print(f"Total de sensores: {len(sensores)}")
 
-    df_ml = LeituraSensor.get_dataset_for_machine_learning(
-        sensor_ids=[sensor.id for sensor in sensores],
-        data_inicial=data_inicial,
-        data_final=hoje
-    )
-
-    print(df_ml)
-
-    print("Salvando o dataset para machine learning.")
-    df_ml.to_csv("../assets/dataset_ml.csv", index=True)
+    # df_ml = LeituraSensor.get_dataset_for_machine_learning(
+    #     sensor_ids=[sensor.id for sensor in sensores],
+    #     data_inicial=data_inicial,
+    #     data_final=hoje
+    # )
+    #
+    # print(df_ml)
+    #
+    # print("Salvando o dataset para machine learning.")
+    # df_ml.to_csv("../assets/dataset_ml.csv", index=True)
 
 
 if __name__ == "__main__":
