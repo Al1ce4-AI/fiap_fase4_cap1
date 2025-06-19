@@ -35,5 +35,6 @@ def inciar_api_thread_paralelo():
 if __name__ == "__main__":
     from src.database.tipos_base.database import Database
     Database.init_sqlite('../../database.db')
+    Database.create_all_tables(drop_if_exists=False)
 
     uvicorn.run(app, host="0.0.0.0", port=8180)

@@ -9,12 +9,12 @@ receber_router = APIRouter()
 
 class LeituraRequest(BaseModel):
     serial: str
-    lux: float or None
-    temperatura: float or None
-    vibracao_media: float or None
-    acelerometro_x: float or None # não utilizado
-    acelerometro_y: float or None # não utilizado
-    acelerometro_z: float or None # não utilizado
+    umidade: float or None
+    ph: float or None
+    estado_fosforo: int or None
+    estado_potassio: int or None
+    estado_api: int or None # não utilizado
+    estado_irrigacao: int or None
 
 
 @receber_router.post("/")
@@ -43,23 +43,29 @@ def receber_leitura(request: LeituraRequest):
                     "message": f"Tipo de sensor para o sensor com serial '{request.serial}' não encontrado."
                 }
 
-            if tipo.tipo == TipoSensorEnum.LUX and request.lux is not None:
+            if tipo.tipo == TipoSensorEnum.UMIDADE and request.umidade is not None:
                 nova_leitura = LeituraSensor(
                     sensor_id=sensor.id,
                     data_leitura=now,
-                    valor= request.lux
+                    valor= request.umidade
                 )
-            elif tipo.tipo == TipoSensorEnum.TEMPERATURA and request.temperatura is not None:
+            elif tipo.tipo == TipoSensorEnum.PH and request.ph is not None:
                 nova_leitura = LeituraSensor(
                     sensor_id=sensor.id,
                     data_leitura=now,
-                    valor=request.temperatura
+                    valor=request.ph
                 )
-            elif tipo.tipo == TipoSensorEnum.VIBRACAO and request.vibracao_media is not None:
+            elif tipo.tipo == TipoSensorEnum.POTASSIO and request.estado_potassio is not None:
                 nova_leitura = LeituraSensor(
                     sensor_id=sensor.id,
                     data_leitura=now,
-                    valor=request.vibracao_media
+                    valor=request.estado_potassio
+                )
+            elif tipo.tipo == TipoSensorEnum.RELE and request.estado_irrigacao is not None:
+                nova_leitura = LeituraSensor(
+                    sensor_id=sensor.id,
+                    data_leitura=now,
+                    valor=request.estado_irrigacao
                 )
             else:
                 continue

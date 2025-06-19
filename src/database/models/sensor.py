@@ -138,6 +138,16 @@ class Sensor(Model):
         nullable=False
     )
 
+    cod_serial: Mapped[str] = mapped_column(
+        String(255),
+        nullable=True,
+        unique=False,
+        info={
+            'label': 'Código Serial'
+        },
+        comment="Código serial do sensor, utilizado para identificação"
+    )
+
     tipo_sensor_id: Mapped[int] = mapped_column(
         ForeignKey('TIPO_SENSOR.id'),
         nullable=False,
@@ -293,6 +303,9 @@ class LeituraSensor(Model):
         },
         comment="Valor da leitura do sensor"
     )
+
+    def __str__(self):
+        return f"Sensor_id: {self.sensor_id} - {self.data_leitura.strftime('%Y-%m-%d %H:%M:%S')} - {self.valor}"
 
     @classmethod
     def get_leituras_for_sensor(cls, sensor_id: int, data_inicial: date, data_final: date):
