@@ -51,6 +51,12 @@ def receber_leitura(request: LeituraRequest):
                     data_leitura=now,
                     valor=request.estado_potassio
                 )
+            elif tipo.tipo == TipoSensorEnum.FOSFORO and request.estado_fosforo is not None:
+                nova_leitura = LeituraSensor(
+                    sensor_id=sensor.id,
+                    data_leitura=now,
+                    valor=request.estado_fosforo
+                )
             elif tipo.tipo == TipoSensorEnum.RELE and request.estado_irrigacao is not None:
                 nova_leitura = LeituraSensor(
                     sensor_id=sensor.id,
