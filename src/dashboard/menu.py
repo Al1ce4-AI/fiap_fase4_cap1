@@ -5,6 +5,8 @@ from src.dashboard.api_metereologica.views import previsao_do_tempo
 from src.dashboard.database.exportar import exportar_db_page
 from src.dashboard.database.importar import importar_db_page
 from src.dashboard.generic.table_view import TableView
+from src.dashboard.modelo_preditivo.exploracao_de_dados import exploracao_de_dados
+from src.dashboard.modelo_preditivo.previsoes import modelo_preditivo_view, previsao_manual_page
 from src.dashboard.plots.views import grafico_umidade_view, grafico_estado_do_rele, grafico_ph, grafico_fosforo, \
     grafico_potassio, grafico_tudo
 from src.dashboard.principal import get_principal_page
@@ -70,6 +72,16 @@ def export_import_menu():
     st.sidebar.page_link(exportar_db_page)
     st.sidebar.page_link(importar_db_page)
 
+def modelo_preditivo_menu():
+    """
+    Função para exibir o menu lateral do aplicativo.
+    Cria as páginas de exportação e importação do banco de dados.
+    """
+
+    st.sidebar.header("Modelo Preditivo")
+    st.sidebar.page_link(exploracao_de_dados)
+    st.sidebar.page_link(previsao_manual_page)
+
 def menu():
     """
     Função para exibir o menu lateral do aplicativo.
@@ -81,5 +93,6 @@ def menu():
     crud_menu()
     plot_menu()
     weather_menu()
+    modelo_preditivo_menu()
     export_import_menu()
 
