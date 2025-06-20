@@ -31,21 +31,22 @@ Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligen
 
 ## Objetivos do projeto:
 
-- Receber dados dos sensores;
-- Ligar ou desligar o relé (bomba d'água) de acordo com a lógica criada pelo grupo;
-- Armazenar manualmente os dados do monitor serial em um banco de dados SQL (simulado em Python);
-- Implementar as operações CRUD básicas no banco de dados;
+- Herança da Fase 3: Realizar um fork do projeto da Fase 3 (https://github.com/Hinten/fiap_fase3_cap1-novo)[https://github.com/Hinten/fiap_fase3_cap1-novo] com as melhorias solicitadas no enunciado;
+- Código C/C++ otimizado: Entregar um código revisado e otimizado para o ESP32, gerenciando sensores e exibindo dados no display LCD;
+- Banco de dados: Aprimorar o banco de dados, revisando e atualizando o modelo de negócio da FarmTech Solutions;
+- Código Python com Scikit-learn e Streamlit: Implementar a modelagem preditiva utilizando Scikit-learn e uma interface interativa com Streamlit;
+- Integração do Serial Plotter: Demonstrar o uso do Serial Plotter com prints do Wokwi para monitoramento das variáveis, insira e explicar os prints no README;
+- Documentação e atualização no GitHub: Atualizar o repositório com documentação detalhada no README, incluindo explicações das melhorias, imagens e prints;
+- Vídeo: Gravar um vídeo de até 5 minutos mostrando o funcionamento do sistema atualizado.
 
 
 ## Entrega 1: Sistema de Sensores e Controle com ESP32
 
 ### 1️⃣ Circuito de sensores
 
-O circuito de sensores foi montado utilizando o ESP32, com os seguintes componentes:
+O circuito de sensores foi atualizado, com os seguintes componentes:
 
-<p align="center"><img src="assets/sistema-de-Irrigacao.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
-
-    - link do sistem no Wokwi: https://wokwi.com/projects/430957703173076993
+<p align="center"><img src="assets/sistema-de-Irrigacao.JPG" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
 Abaixo estão os componentes utilizados:
 - 1x ESP32
@@ -53,55 +54,152 @@ Abaixo estão os componentes utilizados:
 - 1x Sensor de temperatura e umidade DHT22
 - 1x Botão representando o Sensor de Fósforo
 - 1x Botão representando o Sensor de Potássio
-- 1x Botão representando a Api meteorológica
 - 1x Relé
 - 1x Led representando a bomba d'água
+- 1x Tela LCD para visualizar os dados dos sensores
 
 ### Código do ESP32
 
-O código do ESP32 foi desenvolvido em C++, e pode ser encontrado no arquivo [sketch.ino](src/wokwi/sketch.ino). 
+O código do ESP32 foi atualizado, e pode ser encontrado no arquivo [sketch.cpp](src/wokwi/src/sketch.cpp). 
 O código é responsável por monitorar a necessidade de irrigação em uma plantação, simulando sensores de nutrientes e condições ambientais.
+A versão anterior pode ser encontrada no arquivo [sketch.ino](src/wokwi/old/sketch.ino). 
+Segue abaixo a explicação do código atualizado e melhorias em relação a versão anterior
 
 ## Funcionamento
 
-O código lê o estado de cada sensor e, caso dois ou mais estejam em condição crítica, aciona o relé da bomba de irrigação e um LED indicativo. Se a "API meteorológica" (botão vermelho) indicar chuva, a irrigação é interrompida.
+O sistema de irrigação inteligente passou por uma grande evolução na transição do código `sketch.ino` para o novo `sketch.cpp`. Abaixo, destacamos as principais mudanças e melhorias implementadas:
+
+### Principais melhorias do `sketch.cpp` em relação ao `sketch.ino`
+
+- **Estrutura e Organização:**
+  - O código foi modularizado, com funções separadas para conexão Wi-Fi, envio de dados à API, atualização do display LCD e registro no Serial Monitor, facilitando manutenção e expansão.
+  - Uso de `constexpr` e tipos explícitos para definição de pinos e constantes, aumentando a clareza e segurança.
+
+- **Integração com Rede e API:**
+  - O ESP32 conecta-se automaticamente ao Wi-Fi e envia dados dos sensores para uma API remota, que pode decidir sobre a irrigação de forma centralizada e inteligente.
+  - O sistema consulta a API para saber se deve irrigar, tornando a decisão mais robusta e baseada em dados externos.
+
+- **Lógica de Decisão Otimizada:**
+  - A lógica local de ativação da irrigação foi mantida, mas agora é possível priorizar a resposta da API, tornando o sistema híbrido (local + remoto).
+  - O cálculo do pH simulado pelo LDR foi aprimorado: agora o valor é convertido proporcionalmente para a escala real de pH (0 a 14), tornando a simulação mais fiel.
+  - A contagem de condições críticas foi simplificada e otimizada, tornando o código mais enxuto e eficiente.
+
+- **Interface e Feedback ao Usuário:**
+  - Inclusão de display LCD I2C para exibir, em tempo real, umidade, pH, estado dos nutrientes e status da irrigação.
+  - Mensagens mais claras e resumidas no Serial Monitor, facilitando o acompanhamento e debug.
+
+- **Robustez e Manutenção:**
+  - Funções auxiliares centralizam a atualização das saídas (LCD e Serial), facilitando futuras manutenções.
+  - O tratamento dos botões foi refinado para evitar leituras falsas, com debounce otimizado e variáveis de estado bem definidas.
+
+- **Identificação e Expansão:**
+  - O ESP32 envia seu ID único para a API, permitindo rastreabilidade e controle individualizado dos sensores.
+  - O código está preparado para integração com novos sensores, atuadores e funcionalidades futuras.
+
+#### Resumo das principais diferenças
+
+| Aspecto                  | Versão Anterior (`sketch.ino`) | Versão Atual (`sketch.cpp`)         |
+|--------------------------|---------------------------------|-------------------------------------|
+| Organização              | Código monolítico               | Modularizado, funções separadas     |
+| Rede/API                 | Não possui                      | Integração Wi-Fi e API remota       |
+| Display                  | Não possui                      | LCD I2C com dados em tempo real     |
+| Decisão de irrigação     | Apenas local                    | Local + consulta à API              |
+| Conversão de pH          | Simples (divisão por 100)       | Proporcional à escala real (0-14)   |
+| Robustez                 | Básica                          | Debounce otimizado, logs claros     |
+| Expansibilidade          | Limitada                        | Estrutura pronta para expansão      |
+
+Essas melhorias tornam o sistema mais inteligente, confiável, fácil de manter e pronto para integração com soluções de agricultura digital e IoT.
+
+---
+
 
 ### Exemplos de Trechos do Código
 
-- **Definição dos pinos dos sensores e atuadores:**
+- **Definição dos pinos dos sensores e atuadores (agora com constexpr e tipos explícitos):**
   ```cpp
-  #define BUTTON_P 5        // Botão de fósforo (azul)
-  #define BUTTON_K 4        // Botão de potássio (amarelo)
-  #define LDR_PIN 14        // Pino analógico para simular pH via LDR
-  #define DHTPIN 12         // Sensor DHT22 (umidade)
-  #define RELAY_PIN 34      // Relé que aciona a bomba
-  #define LED_PIN 2         // LED indicativo da bomba
-  #define BUTTON_API 18     // Botão de API Meteorológica (vermelho)
+  constexpr uint8_t BUTTON_P      = 5;   // Botão fósforo (GPIO5)
+  constexpr uint8_t BUTTON_K      = 4;   // Botão potássio (GPIO4)
+  constexpr uint8_t LDR_PIN       = 32;  // Pino LDR (GPIO32)
+  constexpr uint8_t DHTPIN        = 12;
+  constexpr uint8_t RELAY_PIN     = 25;
+  constexpr uint8_t LED_PIN       = 2;
+  constexpr uint8_t BUTTON_API    = 18;
+  constexpr auto    DHTTYPE       = DHT22;
   ```
 
-- **Leitura dos sensores e botões:**
+- **Leitura dos sensores e botões (com debounce otimizado):**
   ```cpp
-  int ldrValue = analogRead(LDR_PIN);
+  uint8_t leituraAtual = digitalRead(BUTTON_P);
+  if(leituraAtual == LOW && ultimoEstadoFosforo == HIGH) {
+    estadoFosforo = !estadoFosforo;
+    delay(150);  // Debounce reduzido
+  }
+  ultimoEstadoFosforo = leituraAtual;
+
+  leituraAtual = digitalRead(BUTTON_K);
+  if(leituraAtual == LOW && ultimoEstadoPotassio == HIGH) {
+    estadoPotassio = !estadoPotassio;
+    delay(150);
+  }
+  ultimoEstadoPotassio = leituraAtual;
+
+  uint16_t ldrValue = analogRead(LDR_PIN);  // 0-4095
   float umidade = dht.readHumidity();
-  bool leituraFosforo = digitalRead(BUTTON_P);
-  bool leituraPotassio = digitalRead(BUTTON_K);
-  bool leituraAPI = digitalRead(BUTTON_API);
+  float phSimulado = (ldrValue / 4095.0f) * 14.0f; // Conversão proporcional pH
   ```
 
-- **Lógica de decisão para acionar a irrigação:**
-    - se 2 ou mais sensores apresentarem resultados irregulares, o relé de irrigação será acionado;
-    - se a API Meteorológica informar chuva, o relé de irrigação será desligado (independente da condição)
-    ```cpp
-    if (condicoesCriticas >= 2 && condicoesAPI == 0) {
-      digitalWrite(RELAY_PIN, HIGH);  // Liga a bomba
-      digitalWrite(LED_PIN, HIGH);    // Liga o LED indicativo
-    } else {
-      digitalWrite(RELAY_PIN, LOW);   // Desliga a bomba
-      digitalWrite(LED_PIN, LOW);     // Desliga o LED
-    }
-    ```
+- **Lógica de decisão para acionar a irrigação (local + API):**
+  ```cpp
+  uint8_t condicoesCriticas = 0;
+  condicoesCriticas += !estadoFosforo;
+  condicoesCriticas += !estadoPotassio;
+  condicoesCriticas += (ldrValue > 700);
+  condicoesCriticas += (umidade < 60.0f);
 
+  bool irrigacaoAtiva_local = condicoesCriticas >= 2;
 
+  // Envio dos dados para API e consulta decisão remota
+  int resposta_irrigacao = should_irrigate(doc);
+  bool irrigacaoAtiva = irrigacaoAtiva_local;
+  if (resposta_irrigacao != -1) {
+    irrigacaoAtiva = resposta_irrigacao == 1;
+  }
+
+  digitalWrite(RELAY_PIN, irrigacaoAtiva);
+  digitalWrite(LED_PIN, irrigacaoAtiva);
+  ```
+
+- **Atualização do display LCD e log no Serial Monitor:**
+  ```cpp
+  void atualizarLCD(float& umidade, float& ph, bool& irrigStatus) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(F("U:"));
+    lcd.print(umidade, 1);
+    lcd.print(F("% pH:"));
+    lcd.print(ph, 1);
+    lcd.setCursor(0, 1);
+    lcd.print(F("F:"));
+    lcd.print(estadoFosforo ? F("Y") : F("N"));
+    lcd.print(F(" K:"));
+    lcd.print(estadoPotassio ? F("Y") : F("N"));
+    lcd.print(F(" I:"));
+    lcd.print(irrigStatus ? F("ON") : F("--"));
+  }
+  ```
+
+- **Envio de dados para API e identificação do dispositivo:**
+  ```cpp
+  char chipidStr[17];
+  void iniciar_sensor() {
+    uint64_t chipid = ESP.getEfuseMac();
+    sprintf(chipidStr, "%016llX", chipid);
+    JsonDocument doc;
+    doc["serial"] = chipidStr;
+    post_data(doc, init_sensor);
+  }
+  ```
+  
 - **Exemplo de condição crítica:**
   - LDR (pH): `ldrValue > 7` (Foi aplicado um fator de ÷100 na saída do LDR, para simular o valor do pH que varia de 0 a 14)
   - Umidade: `umidade < 60`
@@ -135,7 +233,6 @@ O código lê o estado de cada sensor e, caso dois ou mais estejam em condição
   - 15 - (Fósforo = 1 / Potássio = 1 / pH = 1 / Umidade = 0) = Desligar Irrigação
   - 16 - (Fósforo = 1 / Potássio = 1 / pH = 1 / Umidade = 1) = Desligar Irrigação
 
-
 ### Demonstração dos resultados do circuito:
 
 * Todos o sensores do circuito apresentando resultados <u>positivos</u>:
@@ -144,7 +241,7 @@ O código lê o estado de cada sensor e, caso dois ou mais estejam em condição
 * Todos os sensores do circuito apresentando resultados <u>negativos</u>:
 <p align="center"><img src="assets/irrigacao_condicao_negativa.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
-### Lançamento Manual dos dados do Monitor Serial no sistema em Python
+### Conexão com a API
 
 O lançamento dos dados do monitor serial no sistema em Python será mostrado no vídeo abaixo, após a explicação do sistema e operações CRUD.
 
@@ -548,7 +645,7 @@ O projeto inclui um dashboard desenvolvido em Python, utilizando a biblioteca St
 
 Conforme solicitado no enunciado, o dashboard permite realizar atualizações de registro diretamente na interface. O usuário pode selecionar um registro, editar os dados e salvar as alterações, que serão refletidas no banco de dados.
 
-Para atualizar a leitura de um sensor, o usario deverá selecionar a opção "Leituras de Sensores" no menu principal. Em seguida, o usuário pode clicar no botão "Editar" para modificar os dados de uma leitura específica. 
+Para atualizar a leitura de um sensor, o usario deverá selecionar a opção "Leituras de Sensores" no menu principal. Em seguida, o usuário pode clicar no botão "Editar" para modificar os dados de uma leitura específica.
 Após realizar as alterações, o usuário deve clicar no botão "Salvar" para atualizar o registro no banco de dados, conforme mencionado nas operações CRUD.
 
 <p align="center">
@@ -670,5 +767,3 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
 ## 📋 Licença
 
 <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/agodoi/template">MODELO GIT FIAP</a> por <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://fiap.com.br">Fiap</a> está licenciado sobre <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Attribution 4.0 International</a>.</p>
-
-

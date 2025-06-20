@@ -312,5 +312,5 @@ void loop() {
   logSerial(umidade, phSimulado, irrigacaoAtiva);
 
   // Delay otimizado (poderia usar millis() para não-blocking)
-  delay(2000);  // Delay reduzido para 2 segundos, suficiente para leituras e atualizações
+  delay(2000);  // Delay modificado para 2 segundos, suficiente para leituras e atualizações
 }
