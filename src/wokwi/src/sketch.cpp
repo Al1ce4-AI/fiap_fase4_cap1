@@ -1,3 +1,4 @@
+// ===== INCLUDES =====
 #include <Arduino.h>
 #include <Wire.h>
 #include <DHT.h>
@@ -5,28 +6,23 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-// ===== DEFINIÇÕES OTIMIZADAS =====
-#define BUTTON_P        5     // Botão fósforo (GPIO5)
-#define BUTTON_K        4     // Botão potássio (GPIO4)
-#define LDR_PIN        32     // Pino LDR (GPIO14)
-#define DHTPIN         12     // DHT22 (GPIO12)
-#define DHTTYPE       DHT22
-#define RELAY_PIN      25     // Relé (GPIO34)
-#define LED_PIN         2     // LED (GPIO2)
-#define BUTTON_API     18     // Botão API (GPIO18)
+// ===== DEFINIÇÕES DE PINOS =====
+constexpr uint8_t BUTTON_P      = 5;   // Botão fósforo (GPIO5)
+constexpr uint8_t BUTTON_K      = 4;   // Botão potássio (GPIO4)
+constexpr uint8_t LDR_PIN       = 32;  // Pino LDR (GPIO32)
+constexpr uint8_t DHTPIN        = 12;
+constexpr uint8_t RELAY_PIN     = 25;
+constexpr uint8_t LED_PIN       = 2;
+constexpr uint8_t BUTTON_API    = 18;
+constexpr auto    DHTTYPE       = DHT22;
 
-// Objetos globais (otimizados para memória flash)
 DHT dht(DHTPIN, DHTTYPE);
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(39, 16, 2);
 
-// ===== VARIÁVEIS DE ESTADO =====
-// Usando tipos menores para economizar RAM
-volatile uint8_t estadoFosforo = 0;    // 0 = OFF, 1 = ON
-volatile uint8_t estadoPotassio = 0;
-// volatile uint8_t estadoAPI = 0;
-uint8_t ultimoEstadoFosforo = HIGH;
-uint8_t ultimoEstadoPotassio = HIGH;
-//uint8_t ultimoEstadoAPI = HIGH;
+volatile uint8_t estadoFosforo    = 0;
+volatile uint8_t estadoPotassio   = 0;
+uint8_t ultimoEstadoFosforo       = HIGH;
+uint8_t ultimoEstadoPotassio      = HIGH;
 
 // ===== PROTÓTIPOS DE FUNÇÃO =====
 void atualizarLCD(float& umidade, float& ph, bool& irrigStatus);
@@ -316,5 +312,5 @@ void loop() {
   logSerial(umidade, phSimulado, irrigacaoAtiva);
 
   // Delay otimizado (poderia usar millis() para não-blocking)
-  delay(800);  // Reduzido de 1000ms
+  delay(2000);  // Delay reduzido para 2 segundos, suficiente para leituras e atualizações
 }
