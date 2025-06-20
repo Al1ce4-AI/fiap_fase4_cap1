@@ -986,13 +986,19 @@ Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
   - <b>dashboard</b>: Código do dashboard desenvolvido em Python, utilizando a biblioteca Streamlit. ([dashboard](src/dashboard/))
   - <b>database</b>: Execução dos comandos de banco de dados, como Conectar, Cadastrar, Listar, Editar e Excluir.
   - <b>logger</b>: Código responsável por registrar as operações realizadas no banco de dados, como inserções, atualizações e exclusões.
+  - <b>modelo_preditivo</b>: Código responsável por treinar o modelo preditivo utilizado para prever a necessidade de irrigação, utilizando a biblioteca Scikit-learn.
+  - <b>plots</b>: Pasta que contém os arquivos de plotagem dos gráficos utilizados no dashboard, como gráficos de barras, linhas e dispersão.
   - <b>service</b>: Conexão com a api pública de previsão do tempo, responsável por coletar dados meteorológicos.
   - <b>wokwi</b>: Código do ESP32, responsável por monitorar a necessidade de irrigação em uma plantação, simulando sensores de nutrientes e condições ambientais.
+  - <b>wokwi_api</b>: Código responsável por receber as leituras dos sensores do ESP32 e prever a necessidade de irrigação, utilizando o modelo preditivo treinado.
 - <b>README</b>: arquivo que serve como guia e explicação geral sobre o projeto (o mesmo que você está lendo agora).
 - <b>main_dash</b>: arquivo principal do dashboard, onde o código é executado. Ele foi colocado nesta localização para evitar problemas com imports
+- <b>.env</b>: arquivo de configuração do projeto, onde são armazenadas as variáveis de ambiente utilizadas no sistema, como credenciais de banco de dados e chaves de APIs externas.
+- <b>requirements.txt</b>: arquivo que contém as dependências do projeto, ou seja, as bibliotecas necessárias para o funcionamento do sistema. Ele é utilizado para instalar as dependências do projeto através do comando `pip install -r requirements.txt`.
 
 ## 🗃 Histórico de lançamentos
 
+* 0.1.5 - 20/05/2025  - Atualizações no readme, melhorias no código e correção de bugs
 * 0.1.2 - 20/05/2025  - Atualizações finais no readme e correção de bugs
 * 0.1.1 - 18/05/2025  - Atualizações do readme, melhorias no código e correção de bugs
 * 0.1.0 - 16/05/2025  - Versão preliminar da nossa aplicação
