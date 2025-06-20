@@ -31,7 +31,7 @@ Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligen
 
 ## Objetivos do projeto:
 
-- Herança da Fase 3: Realizar um fork do projeto da Fase 3 (https://github.com/Hinten/fiap_fase3_cap1-novo)[https://github.com/Hinten/fiap_fase3_cap1-novo] com as melhorias solicitadas no enunciado;
+- Herança da Fase 3: Realizar um fork do projeto da Fase 3 [https://github.com/Hinten/fiap_fase3_cap1-novo](https://github.com/Hinten/fiap_fase3_cap1-novo) melhorias solicitadas no enunciado;
 - Código C/C++ otimizado: Entregar um código revisado e otimizado para o ESP32, gerenciando sensores e exibindo dados no display LCD;
 - Banco de dados: Aprimorar o banco de dados, revisando e atualizando o modelo de negócio da FarmTech Solutions;
 - Código Python com Scikit-learn e Streamlit: Implementar a modelagem preditiva utilizando Scikit-learn e uma interface interativa com Streamlit;
