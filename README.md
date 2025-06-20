@@ -73,11 +73,11 @@ Abaixo estão os componentes utilizados:
 ### Código do ESP32
 
 O código do ESP32 foi desenvolvido em C++, e pode ser encontrado no arquivo [sketch.ino](src/wokwi/sketch.ino). 
-O código é responsável por monitorar a necessidade de irrigação em uma plantação, simulando sensores de nutrientes e condições ambientais.
+O código é responsável por monitorar a necessidade de irrigação em uma plantação, simulando sensores de nutrientes e condições ambientais, inclui também um display LCD para acompanhamento visual dos resultados.
 
 ## Funcionamento
 
-O código lê o estado de cada sensor e, caso dois ou mais estejam em condição crítica, aciona o relé da bomba de irrigação e um LED indicativo. Se a "API meteorológica" (botão vermelho) indicar chuva, a irrigação é interrompida.
+O código lê o estado de cada sensor e, caso dois ou mais estejam em condição crítica, aciona o relé da bomba de irrigação e um LED indicativo. Se a "API meteorológica" (botão vermelho) indicar chuva, a irrigação é interrompida, os resultados são exibidos no display.
 
 ### Exemplos de Trechos do Código
 
@@ -99,6 +99,20 @@ O código lê o estado de cada sensor e, caso dois ou mais estejam em condição
   bool leituraFosforo = digitalRead(BUTTON_P);
   bool leituraPotassio = digitalRead(BUTTON_K);
   bool leituraAPI = digitalRead(BUTTON_API);
+  ```
+
+- **Inicialização do Display LCD:**
+  ```cpp
+  LiquidCrystal_I2C lcd(0x27, 20, 4);
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(" FarmTech Solution");
+  lcd.setCursor(0, 2);
+  lcd.print("   Sistema Ativo ");
+  delay(2500);
+  lcd.clear();
   ```
 
 - **Lógica de decisão para acionar a irrigação:**
