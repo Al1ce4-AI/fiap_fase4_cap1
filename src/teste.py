@@ -67,4 +67,4 @@ def teste():
 
 if __name__ == "__main__":
     gerar_mer_e_ddl()
-    # teste()
+    teste()

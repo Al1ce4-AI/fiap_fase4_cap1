@@ -639,18 +639,34 @@ A estrutura de dados foi projetada para atender às necessidades de um sistema d
 
 Essa estrutura foi escolhida para garantir que o sistema seja robusto, fácil de manter e capaz de atender às demandas de um ambiente agrícola em constante evolução.
 
+## Models e Python
+
+Para realizar a conversão das linhas e colunas da database para Python, foram definidas classes as quais são responsáveis por fazer as operações CRUD e demais funcionalidades do banco de dados.
+Essas classes podem ser encontradas na pasta `src/database/models`, e todas elas herdam a classe principal chamada [Model](src/database/tipos_base/model.py)
+
+
 ### EXECUTAR O SISTEMA E REALIZAR OPERAÇÕES CRUD
 
 O sistema foi desenvolvido em Python e utiliza um banco de dados Oracle para armazenar os dados. O código é modularizado, permitindo fácil manutenção e expansão.
 
 ## 📦 Requisitos
 - Python 3.13.2
-- Bibliotecas:
-  - oracledb==3.1.0
-  - pandas==2.2.3
-  - matplotlib==3.10.1
-  - streamlit==1.44.1
-  - SQLAlchemy==2.0.40
+  - Bibliotecas:
+```plaintext
+  oracledb==3.1.0
+  pandas==2.2.3
+  matplotlib==3.10.1
+  streamlit==1.44.1
+  SQLAlchemy==2.0.40
+  fastapi==0.115.12
+  pydantic==2.11.5
+  uvicorn==0.34.3
+  dotenv==0.9.9
+  seaborn==0.13.2
+  plotly==6.1.2
+  joblib==1.5.1
+  scikit-learn==1.7.0
+```
 
 ## 🔗 Instalação
 - Para instalar as dependências, utilize o seguinte comando:
@@ -664,9 +680,34 @@ O sistema foi desenvolvido em Python e utiliza um banco de dados Oracle para arm
     ```
     > **Nota:** O código foi desenvolvido para rodar em ambiente local, utilizando o Streamlit.
 
+
+## Arquivo de Configuração
+
+O projeto utiliza um arquivo especial denominado **`.env`** para armazenar variáveis de ambiente sensíveis, como credenciais de banco de dados e chaves de APIs externas. Por razões de segurança, esse arquivo **não deve ser compartilhado publicamente**.
+
+### 🔑 Variáveis Utilizadas
+
+| Variável      | Descrição                                                                                                | Exemplo de Valor                  |
+|---------------|----------------------------------------------------------------------------------------------------------|-----------------------------------|
+| SQL_LITE      | Define o banco de dados a ser usado (`true` ou `false`)                                                  | `true` ou `false`                 |
+| LOGGING_ENABLED      | Define se o logger da aplicação será ativado (`true` ou `false`)                                         | `true` ou `false`                 |
+| ENABLE_API      | Define se a API que salva os dados do sensor será ativada juntamente com o dashboard (`true` ou `false`) | `true` ou `false`                 |
+
+
+### ⚙️ Exemplo de arquivo `.env`
+
+```plaintext
+SQL_LITE=true
+LOGGING_ENABLED=true
+ENABLE_API=true
+```
+
+- Se `SQL_LITE=true`, o sistema usará o banco SQLite local.
+- Se `SQL_LITE=false`, será utilizado o banco Oracle da FIAP (o sistema apresentará uma tela de login para colocar o usuário e senha do banco de dados).
+
 ## Login
 
-- O sistema requer um login para acessar as funcionalidades. O usuário e senha devem ser fornecidos no início da execução.
+Ao executar o sistema, se foi setado o SQL_LITE como `false`, primeiramente você verá uma tela de login para inserir o usuário e senha do banco de dados Oracle da FIAP. Após o login, você terá acesso ao dashboard, onde poderá visualizar os dados coletados pelos sensores, gerar posts informativos e monitorar as condições ambientais em tempo real.
 
 <p align="center">
   <img src="assets/dashboard/login.PNG" alt="login" border="0" width=40% height=40%>
@@ -788,18 +829,7 @@ O arquivo zip contém os arquivos no formato CSV, que podem ser importados para 
   <img src="assets/dashboard/importar_banco_de_dados/importacao_concluida.PNG" alt="salvar_db" border="0" width=80% height=80%>
 </p>
 
-# Video demonstrando o funcionamento do circuito e lançamento manual dos dados no sistema em python
-### Cap 1 - Construindo uma máquina agrícola
-
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=HZI6EmQK8E8">
-    <img src="https://img.youtube.com/vi/HZI6EmQK8E8/0.jpg" alt="Assista ao vídeo no YouTube" border="0" width=80% height=80%>
-  </a>
-</div>
-
-    - link do vídeo: https://www.youtube.com/watch?v=HZI6EmQK8E8
-
-### Ir Além 1: Dashboard em Python para Visualização dos Dados
+# Dashboard em Python para Visualização dos Dados
 
 O projeto inclui um dashboard desenvolvido em Python, utilizando a biblioteca Streamlit, que permite visualizar os dados armazenados no banco de dados de forma interativa e amigável. O dashboard apresenta gráficos e tabelas que facilitam a análise dos dados coletados pelos sensores.
 
@@ -836,7 +866,48 @@ Posteriormente, o usuário deve clicar no botão "Gerar Simulação" para visual
   <img src="assets/dashboard/erro_conexao.JPG" alt="WinError 10054" border="0" width=80% height=80%>
 </p>
 
-### Ir Além 2: Integração Python com API Pública
+# Incorporação do Scikit-learn
+
+O grupo realizou treinamento de modelos preditivos para aprimorar a lógica de irrigação.
+
+O arquivo de treinamento do modelo pode ser encontrado em [treinamento_modelos.ipynb](src/modelo_preditivo/treinamento_modelos.ipynb)
+
+## Exploração de Dados
+
+No dashboard foi disponibilizada uma view com informações básicas para a exploração de dados do dataset de treinamento do modelo, conforme imagens abaixo:
+
+<p align="center">
+  <img src="assets/dashboard/modelo_preditivo/exploracao_dados_1.JPG" alt=exploracao_dados_1" border="0" width=80% height=80%>
+</p>
+
+<p align="center">
+  <img src="assets/dashboard/modelo_preditivo/exploracao_dados_2.JPG" alt="exploracao_dados_2" border="0" width=80% height=80%>
+</p>
+
+<p align="center">
+  <img src="assets/dashboard/modelo_preditivo/exploracao_dados_3.JPG" alt="exploracao_dados_3" border="0" width=80% height=80%>
+</p>
+
+<p align="center">
+  <img src="assets/dashboard/modelo_preditivo/exploracao_dados_4.JPG" alt="exploracao_dados_4" border="0" width=80% height=80%>
+</p>
+
+## Previsão Manual de Irrigação
+
+O dashboard também permite que o usuário faça previsões manuais de irrigação, inseririndo os valores de umidade, pH, potássio e fósforo, e o sistema irá calcular se a irrigação deve ser ativada ou não, conforme pode ser verificado no print abaixo:
+
+
+<p align="center">
+  <img src="assets/dashboard/modelo_preditivo/previsao_manual.JPG" alt="previsao_manual" border="0" width=80% height=80%>
+</p>
+
+## Previsão automática e integração com o ESP32
+
+Conforme citado anteriormente, o projeto foi estruturado para permitir a integração com o ESP32, possibilitando que o dispositivo envie leituras de sensores e receba decisões de irrigação.
+
+Esta previsão automática é realizada através de uma API que recebe os dados dos sensores e utiliza um modelo preditivo treinado para decidir se a irrigação deve ser ativada ou não, conforme pode ser verificado no arquivo [prever_irrigacao.py](src/wokwi_api/prever_irrigacao.py)
+
+# Integração Python com API Pública
 
 Para acessar a api o usuário deverá selecionar as opções "Previsão do Tempo" ou "Irrigação" no menu principal.
 
