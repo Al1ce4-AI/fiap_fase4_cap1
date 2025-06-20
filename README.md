@@ -36,6 +36,18 @@ Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligen
 - Armazenar manualmente os dados do monitor serial em um banco de dados SQL (simulado em Python);
 - Implementar as operações CRUD básicas no banco de dados;
 
+## Automação e inteligência na FarmTech Solutions
+
+**Confira o vídeo de apresentação do projeto clicando no link ou imagem abaixo:**
+
+<div align="center">
+  <a href="https://youtu.be/XujLcoHgntE" target="_blank">
+    <img src="assets/Banner FIAP_fase4_cap1.png" alt="Fase4Cap1" border="0" width="70%" height="70%"/>
+  </a>
+</div>
+
+
+[https://youtu.be/XujLcoHgntE](https://youtu.be/XujLcoHgntE)
 
 ## Entrega 1: Sistema de Sensores e Controle com ESP32
 
@@ -45,7 +57,7 @@ O circuito de sensores foi montado utilizando o ESP32, com os seguintes componen
 
 <p align="center"><img src="assets/sistema-de-Irrigacao.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
-    - link do sistem no Wokwi: https://wokwi.com/projects/430957703173076993
+    - link do sistem no Wokwi: https://wokwi.com/projects/433871258996030465
 
 Abaixo estão os componentes utilizados:
 - 1x ESP32
@@ -56,6 +68,7 @@ Abaixo estão os componentes utilizados:
 - 1x Botão representando a Api meteorológica
 - 1x Relé
 - 1x Led representando a bomba d'água
+- 1x Display LCD com 4 linhas, 20 caracteres por linha - lcd2004
 
 ### Código do ESP32
 
