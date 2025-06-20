@@ -6,7 +6,7 @@ import pandas as pd
 
 def gerar_mer_e_ddl():
     """Gera o MER e DDL do banco de dados."""
-    Database.init_sqlite("../database.db")
+    Database.init_oracledb("RM561409", "250489")
     Database.create_all_tables(drop_if_exists=False)
     ddl = Database.generate_ddl()
 
@@ -67,4 +67,4 @@ def teste():
 
 if __name__ == "__main__":
     gerar_mer_e_ddl()
-    teste()
+    # teste()

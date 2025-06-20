@@ -255,9 +255,200 @@ Essas melhorias tornam o sistema mais inteligente, confiável, fácil de manter 
 * Todos os sensores do circuito apresentando resultados <u>negativos</u>:
 <p align="center"><img src="assets/irrigacao_condicao_negativa.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
-### Conexão com a API
 
-O lançamento dos dados do monitor serial no sistema em Python será mostrado no vídeo abaixo, após a explicação do sistema e operações CRUD.
+## Conexão com o wifi e envio de dados para a API
+
+Para que a simulação funcione corretamente, é necessário configurar a conexão com Wi-Fi simulado do Wokwi em como, configurar o IP do servidor local da API.
+No momento, neste MVP a api e a simulação do ESP32 estão rodando localmente. 
+Para a confirguração funcionar corretamente, é necessário alterar o arquivo [platformio.ini](src/wokwi/platformio.ini) e setar a váriavel 'API_URL' para 'http://**IP DE SUA MÁQUINA NA REDE LOCAL**:8180' conforme exemplo abaixo:
+
+```plaintext
+[env:esp32]
+platform = espressif32
+framework = arduino
+board = esp32dev
+lib_deps = 
+    bblanchon/ArduinoJson@^7.4.1
+    marcoschwartz/LiquidCrystal_I2C@^1.1.4
+    adafruit/DHT sensor library@^1.4.4
+build_flags = 
+    '-D API_URL="http://192.168.0.62:8180"'
+    '-D NETWORK_SSID="Wokwi-GUEST"'
+    '-D NETWORK_PASSWORD=""'
+```
+
+>NOTA1: Não sete o ip da API para localhost ou 127.0.0.1 pois o ESP32 não conseguirá se conectar a ele, pois o localhost do ESP32 é o próprio ESP32 e não a máquina onde o servidor está rodando.
+
+>NOTA2: Caso você esteja rodando a simulação e mesmo assim o ESP32 não consiga se conectar a API, verifique se o firewall da sua máquina está bloqueando a porta 8180, caso esteja, libere a porta para que o ESP32 consiga se conectar.
+
+
+Após configurado o arquivo `platformio.ini`, você poderá iniciar a simulação do ESP32 no Wokwi. O circuito irá coletar os dados dos sensores e enviá-los para a API, que por sua vez irá armazenar os dados no banco de dados.
+
+## API para salvar os dados do sensor
+
+Neste Projeto, foi implementada uma API básica utilizando o FastAPI para receber os dados do sensor e armazená-los no banco de dados. A API permite que o ESP32 envie as leituras dos sensores, que são então salvas no banco de dados para posterior análise e visualização.
+Para facilitar os testes, a API está configurada para rodar localmente na porta 8180 e será iniciada automaticamente junto ao dashboard ao executar o comando `streamlit run main_dash.py` quando a variável de ambiente `ENABLE_API` for setada como `true`.
+No entanto, caso queira, a api pode ser executada separadamente executando o arquivo [api_basica.py](src/wokwi_api/api_basica.py).
+
+A api também funciona como ponte de comunicação entre o sensor e o modelo preditivo criado pelo grupo no aprimoramento da lógica de irrigação.
+
+Explicações mais detalhadas sobre como iniciar o dashboard e variáveis de ambiente serão apresentadas na seção "INSTALANDO E EXECUTANDO O PROJETO", a seguir neste mesmo README.md.
+
+
+## Funcionamento da API "init_sensor"
+
+  # Funcionamento:
+    Recebe uma Requisição
+    A requisição deve conter um campo serial no corpo JSON, representando o número de série único do sensor.
+
+  # Verifica e Cria Tipos de Sensores
+    Para cada valor do TipoSensorEnum, o script verifica se já existe um tipo correspondente no banco de dados.
+    Se o tipo ainda não existir, ele é criado e persistido.
+
+  # Verifica Existência de Sensor
+    Antes de cadastrar um novo sensor, o script verifica se já existe um sensor com o mesmo número de série (serial) e o mesmo tipo.
+    Se já existir, o sensor não é recriado (evita duplicatas).
+
+  # Criação do Sensor
+    Caso o sensor ainda não exista, ele é criado com:
+      Nome no formato Sensor <tipo> - <serial>
+      Serial fornecido pela requisição
+      Tipo de sensor associado
+      Descrição padrão
+
+  # Resposta da API
+    Ao final do processo, retorna um JSON com status de sucesso e uma mensagem confirmando o cadastro.
+
+  # Exemplo requisição:
+    POST /init
+    {
+      "serial": "ABC123"
+    }
+
+  # Exemplo de resposta:
+    {
+      "status": "success",
+      "message": "Sensor cadastrado com sucesso."
+    }
+
+
+## Funcionamento da API "receber_leitura"
+
+### Funcionamento Geral
+A API "receber_leitura" recebe leituras dos sensores do ESP32 e armazena os dados no banco de dados, associando cada leitura ao tipo correto de sensor (umidade, pH, potássio, fósforo, relé/irrigação) conforme o modelo de dados atualizado.
+
+### Fluxo da Requisição
+- **Método:** POST
+- **Endpoint:** `/leitura/`
+- **Corpo esperado (JSON):**
+  - `serial`: número de série do sensor (obrigatório)
+  - `umidade`: valor da leitura do sensor de umidade (opcional)
+  - `ph`: valor da leitura do sensor de pH (opcional)
+  - `estado_potassio`: estado do sensor de potássio (opcional)
+  - `estado_fosforo`: estado do sensor de fósforo (opcional)
+  - `estado_irrigacao`: estado do relé/irrigação (opcional)
+
+### Lógica de Processamento
+1. **Busca de Sensores:**
+   - A API busca todos os sensores cadastrados no banco de dados com o serial informado.
+   - Se nenhum sensor for encontrado, retorna erro informando que o sensor não foi localizado.
+
+2. **Identificação do Tipo de Sensor:**
+   - Para cada sensor encontrado, identifica o tipo (UMIDADE, PH, POTASSIO, FOSFORO, RELE).
+   - Para cada tipo, verifica se o campo correspondente está presente na requisição:
+     - Se sim, cria uma nova leitura para aquele sensor, com o valor informado e a data/hora atual.
+     - Se não, ignora aquele sensor/tipo.
+
+3. **Armazenamento:**
+   - As leituras válidas são salvas no banco de dados na tabela `LEITURA_SENSOR`.
+
+4. **Resposta:**
+   - Após o processamento, retorna um JSON indicando sucesso ou erro.
+
+### Exemplo de Requisição POST
+```json
+{
+  "serial": "ABC123",
+  "umidade": 55.2,
+  "ph": 6.8,
+  "estado_potassio": 1,
+  "estado_fosforo": 0,
+  "estado_irrigacao": 1
+}
+```
+
+### Exemplo de Resposta
+```json
+{
+  "status": "success",
+  "message": "Leitura recebida com sucesso"
+}
+```
+
+### Observações
+- O endpoint aceita múltiplos tipos de leitura em uma única requisição, salvando cada valor no sensor correspondente.
+- Caso o tipo de sensor não seja encontrado para o serial informado, retorna erro específico.
+- O campo `estado_irrigacao` representa o estado do relé (0 = desligado, 1 = ligado).
+- Todos os dados são registrados com timestamp do momento do recebimento.
+
+## Funcionamento da API "irrigacao"
+
+### Funcionamento Geral
+A API "irrigacao" é responsável por prever, de forma inteligente, se a irrigação deve ser ativada ou não, considerando tanto os dados dos sensores locais quanto informações meteorológicas externas.
+
+### Fluxo da Requisição
+- **Método:** POST
+- **Endpoint:** `/irrigacao/`
+- **Corpo esperado (JSON):**
+  - `serial`: número de série do sensor (obrigatório)
+  - `umidade`: valor da leitura do sensor de umidade (opcional)
+  - `ph`: valor da leitura do sensor de pH (opcional)
+  - `estado_potassio`: estado do sensor de potássio (opcional)
+  - `estado_fosforo`: estado do sensor de fósforo (opcional)
+
+### Lógica de Processamento
+1. **Identificação do Plantio e Localização:**
+   - A API busca o(s) sensor(es) pelo serial informado e identifica o plantio e a propriedade associados.
+   - Caso a propriedade possua cidade cadastrada, utiliza essa cidade para buscar a previsão do tempo.
+   - Se não houver cidade cadastrada, utiliza uma cidade padrão (ex: "São Paulo").
+
+2. **Obtenção de Dados Climáticos:**
+   - A API consulta um serviço externo para obter a previsão do tempo da cidade identificada.
+   - Se já houver uma previsão recente (menos de 24h), reutiliza os dados para otimizar chamadas.
+
+3. **Decisão de Irrigação:**
+   - Se a previsão indicar chuva, a irrigação é automaticamente desativada (`irrigar: false`).
+   - Caso contrário, a decisão é feita por um modelo preditivo, que considera os dados dos sensores (umidade, pH, fósforo, potássio) e a hora da leitura.
+   - O modelo retorna se deve irrigar ou não.
+
+4. **Resposta:**
+   - A API retorna um JSON indicando se a irrigação deve ser ativada (`irrigar: true`) ou não (`irrigar: false`).
+   - Em caso de erro (ex: sensor não encontrado), retorna mensagem de erro.
+
+### Exemplo de Requisição POST
+```json
+{
+  "serial": "ABC123",
+  "umidade": 55.2,
+  "ph": 6.8,
+  "estado_potassio": 1,
+  "estado_fosforo": 0
+}
+```
+
+### Exemplo de Resposta
+```json
+{
+  "status": "success",
+  "irrigar": true
+}
+```
+
+### Observações
+- A decisão de irrigação é feita de forma híbrida: primeiro verifica a previsão de chuva, depois utiliza o modelo preditivo.
+- O endpoint pode ser utilizado pelo ESP32 para decidir automaticamente se deve acionar a bomba de irrigação.
+- O modelo preditivo pode ser ajustado conforme a necessidade, utilizando dados históricos e variáveis relevantes.
+- Caso o sensor não seja encontrado, a API retorna erro específico.
 
 ---
 
@@ -329,18 +520,12 @@ O armazenamento dos dados coletados pelos sensores foi implementado em Python, u
 
 ### MER
 
-O grupo teve que fazer algumas alterações em relação ao modelo de banco de dados apresentado na entrega anterior [treino258/fiap_fase2_cap1](https://github.com/treino258/fiap_fase2_cap1), para que ele se adequasse a nova proposta do projeto. O modelo abaixo representa as novas tabelas criadas para o armazenamento dos dados:
+O grupo realizou pequenas mudanças no modelo de banco de dados em relação à entrega anterior. O modelo abaixo representa as tabelas e relacionamentos atuais utilizados para o armazenamento dos dados:
 
-<p align="center">
-  <b>Antigo</b><br>
-  <img src="assets/mer_antigo.png" alt="MER Antigo" border="0" width=70% height=70%>
-</p>
-<br>
 <p align="center">
   <b>Novo</b><br>
-  <img src="assets/mer.png" alt="MER Novo" border="0" width=70% height=70%>
+  <img src="assets/mer.png" alt="MER" border="0" width=70% height=70%>
 </p>
-
 
 
 Novo Modelo de Entidade-Relacionamento:
@@ -354,6 +539,7 @@ Tabela: PROPRIEDADE
   - id (INTEGER NOT NULL) [PK]
   - nome (VARCHAR(100) NOT NULL)
   - cnpj (VARCHAR(14))
+  - cidade (VARCHAR(255))
 
 Tabela: CAMPO
   - id (INTEGER NOT NULL) [PK]
@@ -382,8 +568,9 @@ Tabela: TIPO_SENSOR
 
 Tabela: SENSOR
   - id (INTEGER NOT NULL) [PK]
+  - cod_serial (VARCHAR(255))
   - tipo_sensor_id (INTEGER NOT NULL) [FK -> TIPO_SENSOR]
-  - plantio_id (INTEGER NOT NULL) [FK -> PLANTIO]
+  - plantio_id (INTEGER) [FK -> PLANTIO]
   - nome (VARCHAR(255) NOT NULL)
   - descricao (VARCHAR(255))
   - data_instalacao (DATETIME)
@@ -418,48 +605,9 @@ Tabela: APLICACAO_NUTRIENTE
   - quantidade (FLOAT NOT NULL)
   - observacao (TEXT(1000))
 
-## Resumo das mudanças entre o modelo antigo e o novo
+### Principais alterações realizadas
 
-### Alterações Removidas
-1. **Tabelas e Colunas**:
-   - A tabela `aplicacao_nutrientes` foi removida, incluindo suas colunas:
-     - `id_aplicacao`, `plantio_id_plantio`, `unidade_medida_id_unidade`, `nutriente_id_nutriente`, `data_hora`, `quantidade_aplicada`, `observacao`.
-   - A tabela `leiturasensor` foi removida, incluindo suas colunas:
-     - `id_leitura`, `plantio_id_plantio`, `sensor_id_sensor`, `unidade_medida_id_unidade`, `data_hora_leitura`, `valor_lido`.
-   - A tabela `unidade_medida` foi removida, incluindo suas colunas:
-     - `id_unidade`, `nome`.
-
-2. **Relacionamentos**:
-   - Relacionamentos envolvendo as tabelas removidas (`aplicacao_nutrientes`, `leiturasensor`, `unidade_medida`) foram eliminados.
-
-3. **Colunas Específicas**:
-   - A coluna `localizacao_geo` foi removida da tabela `campo`.
-   - A coluna `localizacao` foi removida da tabela `sensor`.
-
-### Alterações Adicionadas
-1. **Tabelas e Colunas**:
-   - Novas tabelas foram adicionadas:
-     - `APLICACAO_NUTRIENTE` com colunas: `id`, `plantio_id`, `nutriente_id`, `unidade_id`, `data_aplicacao`, `quantidade`, `observacao`.
-     - `LEITURA_SENSOR` com colunas: `id`, `sensor_id`, `data_leitura`, `valor`.
-     - `UNIDADE` com colunas: `id`, `nome`, `multiplicador`.
-
-2. **Relacionamentos**:
-   - Novos relacionamentos foram criados para as tabelas adicionadas:
-     - `APLICACAO_NUTRIENTE` agora referencia `PLANTIO`, `NUTRIENTE` e `UNIDADE`.
-     - `LEITURA_SENSOR` agora referencia `SENSOR`.
-
-3. **Colunas Específicas**:
-   - A tabela `CAMPO` agora possui a coluna `area_ha` em vez de `area_hectares`.
-   - A tabela `SENSOR` agora possui as colunas `latitude` e `longitude`.
-
-### Alterações Gerais
-- Os nomes das tabelas e colunas foram padronizados para maiúsculas no novo modelo.
-- Tipos de dados foram ajustados:
-  - `TIMESTAMP` foi substituído por `DATE` em várias tabelas.
-  - `NUMBER` foi substituído por `FLOAT` em colunas numéricas.
-- Restrições de chave primária e única foram mantidas ou ajustadas para refletir as mudanças nas tabelas e colunas.
-
-Essas alterações refletem uma reorganização e simplificação do modelo de dados, com a remoção de tabelas e colunas redundantes e a introdução de novas estruturas mais alinhadas às necessidades do sistema.
+- Atualização da lista de tabelas e colunas, incluindo campos como cidade em PROPRIEDADE, cod_serial em SENSOR, e ajustes em chaves estrangeiras.
 
 ### JUSTIFICATIVA DA ESCOLHA DA ESTRUTURA DE DADOS
 
