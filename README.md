@@ -58,7 +58,7 @@ Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligen
 
 O circuito de sensores foi atualizado, com os seguintes componentes:
 
-<p align="center"><img src="assets/sistema-de-Irrigacao.JPG" alt="Circuito de sensores" border="0" width=70% height=70%></p>
+<p align="center"><img src="assets/sistema-de-irrigacao.JPG" alt="Circuito de sensores" border="0" width=70% height=70%></p>
 
     - link do sistem no Wokwi: https://wokwi.com/projects/433871258996030465
 
