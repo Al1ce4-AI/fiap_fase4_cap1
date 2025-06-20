@@ -150,7 +150,69 @@ O lançamento dos dados do monitor serial no sistema em Python será mostrado no
 
 ---
 
-### 2️⃣ Armazenamento de Dados em Banco SQL com Python
+### 2️⃣ Demonstração do Serial Plotter
+
+Para monitorar o comportamento do circuito e acompanhar o resultado dos sensores demonstramos abaixo alguns cenários.
+
+### SERIAL PLOTTER
+
+Foram criar algumas condições apresentadas na leitura dos sensores de pH e Umidade, como: Oscilação Estável, Oscilação Varível, Variação para cima e Variação para Baixo. (Obs: Comparamos apenas pH e Umidade, pors são os únicos sensores dos nosso circuito que não oscilavam apenas entre 0 e 1):
+* Azul = Umidade
+* Rosa = pH
+
+<br>
+* <strong>Oscilação Estável:</strong> Pouca variação de umidade e pouca variação de pH.
+<p align="center">
+  <b>Gráfico</b><br>
+  <img src="assets/wokwi/estavel_grafico.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+<p align="center">
+  <b>Dados</b><br>
+  <img src="assets/wokwi/estavel_dados.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+
+<br>
+* <strong>Oscilação Variável:</strong> Muita variação de umidade que influencia em uma grande variação de pH.
+<p align="center">
+  <b>Gráfico</b><br>
+  <img src="assets/wokwi/oscilacao_grafico.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+<p align="center">
+  <b>Dados</b><br>
+  <img src="assets/wokwi/oscilacao_dados.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+
+<br>
+* <strong>Variação para Cima:</strong> O aumento da umidade influenciou no aumento do pH.
+<p align="center">
+  <b>Gráfico</b><br>
+  <img src="assets/wokwi/variacao_cima_grafico.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+<p align="center">
+  <b>Dados</b><br>
+  <img src="assets/wokwi/variacao_cima_dados.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+<br>
+* <strong>Variação para Baixo:</strong> O queda da umidade influenciou na redução do pH.
+<p align="center">
+  <b>Gráfico</b><br>
+  <img src="assets/wokwi/variacao_baixo_grafico.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+<p align="center">
+  <b>Dados</b><br>
+  <img src="assets/wokwi/variacao_baixo_dados.png" alt="Serial Plotter" border="0" width=70% height=70%>
+</p>
+
+---
+
+### 3️⃣ Armazenamento de Dados em Banco SQL com Python
 
 O armazenamento dos dados coletados pelos sensores foi implementado em Python, utilizando um banco de dados SQL. O código é responsável por criar tabelas, inserir dados e realizar operações CRUD (Criar, Ler, Atualizar e Deletar) no banco de dados.
 
