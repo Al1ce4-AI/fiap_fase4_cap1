@@ -156,7 +156,7 @@ Para monitorar o comportamento do circuito e acompanhar o resultado dos sensores
 
 ### SERIAL PLOTTER
 
-Foram criar algumas condições apresentadas na leitura dos sensores de pH e Umidade, como: Oscilação Estável, Oscilação Varível, Variação para cima e Variação para Baixo. (Obs: Comparamos apenas pH e Umidade, pors são os únicos sensores dos nosso circuito que não oscilavam apenas entre 0 e 1):
+Foram criadas algumas condições apresentadas na leitura dos sensores de pH e Umidade, como: Oscilação Estável, Oscilação Varível, Variação para cima e Variação para Baixo. (Obs: Comparamos apenas pH e Umidade, pors são os únicos sensores dos nosso circuito que não oscilavam apenas entre 0 e 1):
 * Azul = Umidade
 * Rosa = pH
 
