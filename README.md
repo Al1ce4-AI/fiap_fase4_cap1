@@ -39,6 +39,18 @@ Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligen
 - Documentação e atualização no GitHub: Atualizar o repositório com documentação detalhada no README, incluindo explicações das melhorias, imagens e prints;
 - Vídeo: Gravar um vídeo de até 5 minutos mostrando o funcionamento do sistema atualizado.
 
+## Automação e inteligência na FarmTech Solutions
+
+**Confira o vídeo de apresentação do projeto clicando no link ou imagem abaixo:**
+
+<div align="center">
+  <a href="https://youtu.be/XujLcoHgntE" target="_blank">
+    <img src="assets/Banner FIAP_fase4_cap1.png" alt="Fase4Cap1" border="0" width="70%" height="70%"/>
+  </a>
+</div>
+
+
+[https://youtu.be/XujLcoHgntE](https://youtu.be/XujLcoHgntE)
 
 ## Entrega 1: Sistema de Sensores e Controle com ESP32
 
@@ -46,7 +58,9 @@ Nesta etapa, a FarmTech Solutions implementa um sistema de irrigação inteligen
 
 O circuito de sensores foi atualizado, com os seguintes componentes:
 
-<p align="center"><img src="assets/sistema-de-Irrigacao.JPG" alt="Circuito de sensores" border="0" width=70% height=70%></p>
+<p align="center"><img src="assets/sistema-de-Irrigacao.png" alt="Circuito de sensores" border="0" width=70% height=70%></p>
+
+    - link do sistem no Wokwi: https://wokwi.com/projects/433871258996030465
 
 Abaixo estão os componentes utilizados:
 - 1x ESP32
@@ -56,7 +70,7 @@ Abaixo estão os componentes utilizados:
 - 1x Botão representando o Sensor de Potássio
 - 1x Relé
 - 1x Led representando a bomba d'água
-- 1x Tela LCD para visualizar os dados dos sensores
+- 1x Display LCD com 4 linhas, 20 caracteres por linha - lcd2004
 
 ### Código do ESP32
 
